@@ -21,7 +21,6 @@ const protect = asyncHandler(async(req,res,next)=>{
             res.status(401)
             throw new Error('Not Authorized')
         }
-
     }
     if(!token){
         res.status(402)
@@ -30,15 +29,14 @@ const protect = asyncHandler(async(req,res,next)=>{
 });
 
 //authenticates only Admin
-const authOnlyAdmin = asyncHandler(async (req, res, next) => {
-    const userRole = req.user.role;
-
-    if (userRole === "admin") {
+const authOnlyAdmin = (req, res, next) => {
+    if (req.user && req.user.role==='Admin') {
         next();
-    } else {
+    } 
+    else {
         res.status(401)
-        throw new Error("Not Authorized");
+        throw new Error("Not Authorized as an admin");
     }
-})
+}
 
 module.exports = { protect, authOnlyAdmin }

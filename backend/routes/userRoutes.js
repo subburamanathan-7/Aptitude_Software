@@ -7,7 +7,7 @@ const {registerUser, logoutUser, registerAdmin, loginAdmin} =  require('../contr
 router.route('/register').post(registerUser)
 router.route('/logout').post(protect,logoutUser)
 
-router.route('/aregister').post(registerAdmin)
+router.route('/aregister').post(protect,authOnlyAdmin,registerAdmin)
 router.route('/alogin').post(loginAdmin)
 
-module.exports = router;
+module.exports = router; 

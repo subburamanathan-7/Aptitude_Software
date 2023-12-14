@@ -30,9 +30,9 @@ const createQuestion = asyncHandler(async(req,res)=>{
     const{
         questionString,
         questionImage,
-        questionSet,
+        questionCore,
         questionCategory,
-        questionLevel,
+        questionSet,
         questionOptions,
         questionAnswer
     } = req.body;
@@ -40,9 +40,9 @@ const createQuestion = asyncHandler(async(req,res)=>{
     const newQuestion = await Question.create({
         questionString,
         questionImage:questionImage?questionImage:null,
-        questionSet,
+        questionCore:questionCore?questionCore:null,
         questionCategory,
-        questionLevel,
+        questionSet:questionSet?questionSet:null,
         questionOptions,
         questionAnswer
     })
@@ -76,13 +76,25 @@ const updateQuestion = asyncHandler(async(req,res)=>{
 
 const deleteQuestion = asyncHandler(async(req,res)=>{
     const question  = await Question.findById(req.params.id)
+
     if(!question){
         res.status(400)
         throw new Error('Question not listed')
     }
-    const removedQuestion = await Question.findByIdAndRemove(req.params.id)
+
+    const removedQuestion = await Question.findByIdAndDelete(req.params.id)
     res.status(200).json({removedQuestion})
 })
+
+// @desc createTest
+// @route POST api/question/createtest
+// @access Private { admin }
+
+const createTest = asyncHandler(async(req,res)=>{
+    
+})
+
+
 
 module.exports ={
     listQuestions,

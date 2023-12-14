@@ -5,7 +5,6 @@ const User = require('../models/userModels')
 const generateToken = require("../config/generateToken.js");
 
 
-
 // @desc registerUser
 // @route POST api/user/register
 // @access Public
@@ -24,7 +23,7 @@ const registerUser = asyncHandler(async(req,res)=>{
         throw new Error('Please add the neccesary fields')
     }
 
-    const userExists = await User.findOne({$and:[{regNo},{role}]});
+    const userExists = await User.findOne({ $and: [{ regNo }, { role }] });
 
     if(userExists){
         if(userExists.active){
@@ -45,6 +44,7 @@ const registerUser = asyncHandler(async(req,res)=>{
                 role: loggedInUser.role,
                 active: loggedInUser.active,
                 token: generateToken(loggedInUser._id),
+
             })
         }
     }
@@ -52,13 +52,14 @@ const registerUser = asyncHandler(async(req,res)=>{
         const newUser = await User.create({
             fullName,
             regNo,
-            dept,
+            dept, 
             email,
             role,
             active:true
         });
 
         if(newUser){
+            
             res.status(201).json({
                 _id: newUser._id,
                 fullName: newUser.fullName,
@@ -69,6 +70,7 @@ const registerUser = asyncHandler(async(req,res)=>{
                 active: newUser.active,
                 token: generateToken(newUser._id),
             })
+
         }
         else {
             res.status(400)
@@ -95,10 +97,10 @@ const registerAdmin = asyncHandler(async(req,res)=>{
         throw new Error('Please add the neccesary fields')
     }
 
-    const userExists = await User.findOne({$and:[{regNo},{role}]});
+    const userExists = await User.findOne({ $and: [{ regNo }, { role }] });
 
     if(userExists){
-        throw new Error('Admin Already Exist. Please Login')
+        throw new Error('User Already Exist. Please Login')
     }
 
     const salt = await bcrypt.genSalt(10)
@@ -121,7 +123,6 @@ const registerAdmin = asyncHandler(async(req,res)=>{
             email: newUser.email,
             dept: newUser.dept,
             role: newUser.role,
-            
             token: generateToken(newUser._id),
         })
     }
@@ -141,6 +142,8 @@ const loginAdmin = asyncHandler(async(req,res)=>{
     const currentUser = await User.findOne({ $and: [{ regNo }, { role:"Admin" }] });
 
     if(currentUser && (await bcrypt.compare(password,currentUser.password)) && currentUser.role==="Admin"){
+        
+
         res.status(201).json({
 
             fullName: currentUser.fullName,
@@ -190,12 +193,10 @@ const logoutUser = asyncHandler(async(req,res)=>{
 
 })
 
-
 module.exports = {
     registerUser,
     registerAdmin,
     loginAdmin,
     getMe,
     logoutUser
-
 }

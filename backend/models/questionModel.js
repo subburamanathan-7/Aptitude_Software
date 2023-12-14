@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 
 const answerSchema = mongoose.Schema({
+    
     answerString:{
         type:String
     },
@@ -8,48 +9,48 @@ const answerSchema = mongoose.Schema({
         type:String
     }
 })
-const questionSchema =  mongoose.Schema(
-    {
-        questionString:{
-            type:String,
-        },
+const questionSchema =  mongoose.Schema({
 
-        questionImage:{
-            type:String
-        },
+    questionString:{
+        type:String,
+    },
 
-        //Optional {not present for aptitude, verbal, coding}
-        questionCore:{
-            type:String
-        },
+    questionImage:{
+        type:String
+    },
 
-        questionCategory:{
-            type:String,
-            enum:[
-                'aptitude',
-                'verbal',
-                'core',
-                'coding'
-            ]
-        },
-        questionSet:{
-            type:String
-        },
+    //Department
+    questionCore:{
+        type:String
+    },
 
-        // questionLevel:{
-        //     type:String,
-        //     enum:[
-        //         'easy',
-        //         'medium',
-        //         'hard',
-        //     ]
-        // },
+    questionCategory:{
+        type:String,
+        enum:[
+            'aptitude',
+            'verbal',
+            'core',
+            'coding'
+        ]
+    },
+    questionSet:{
+        type:String
+    },
 
-        questionOptions: new Array(answerSchema),
-        questionAnswer:{
-            type:String,
-        }
+    // questionLevel:{
+    //     type:String,
+    //     enum:[
+    //         'easy',
+    //         'medium',
+    //         'hard',
+    //     ]
+    // },
+
+    questionOptions: new Array(answerSchema),
+    
+    questionAnswer:{
+        type:String,
     }
-)
+})
 
 module.exports = mongoose.model('Question',questionSchema)

@@ -6,6 +6,7 @@ const dotenv = require('dotenv');
 const connectDB = require('./config/dbconfig');
 const userRoutes = require('./routes/userRoutes');
 const questionRoutes = require('./routes/questionRoutes');
+const responseRoutes = require('./routes/responseRoutes');
 
 const { errorHandler, notFound } = require("./middlewares/errorMiddlewares")
 
@@ -17,7 +18,7 @@ app.use(express.json());
 app.use(express.urlencoded({extended:false})) //urlEncoded
 app.use("/api/user/", userRoutes);
 app.use("/api/question/", questionRoutes);
-
+app.use("/api/response/", responseRoutes);
 
 
 app.use(notFound);
