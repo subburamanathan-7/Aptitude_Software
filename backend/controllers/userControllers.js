@@ -170,7 +170,7 @@ const getMe = asyncHandler(async(req,res)=>{
 // @desc logoutUser
 // @route POST api/user/logout
 // @access Private
-const logoutUser = asyncHandler(async(req,res)=>{
+const  logoutUser = asyncHandler(async(req,res)=>{
     // console.log(req.user)
     const value = {$set:{active:false}}
     await User.updateOne({_id:req.user._id},value)
@@ -193,10 +193,42 @@ const logoutUser = asyncHandler(async(req,res)=>{
 
 })
 
+
+// @desc resetLogin
+// @route POST api/user/reset
+// @access Private {Admin}
+
+const resetLogin = asyncHandler(async(req,res)=>{
+
+    const {userID} = req.body;
+    const value = {$set:{active:false}}
+    await User.updateOne({_id:userID},value)
+
+    const loggedOutUser = await User.findById(userID);
+
+    if(loggedOutUser){
+        res.status(201).json({
+            fullName: loggedOutUser.fullName,
+            email: loggedOutUser.email,
+            regNo: loggedOutUser.regNo,
+            dept: loggedOutUser.dept,
+            role: loggedOutUser.role,
+            active: loggedOutUser.active,
+        })
+    }
+    else{
+        throw new Error("Reset Failed")
+    }
+
+})
+
+
 module.exports = {
     registerUser,
     registerAdmin,
     loginAdmin,
     getMe,
-    logoutUser
+    logoutUser,
+
+    resetLogin
 }

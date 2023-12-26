@@ -3,7 +3,6 @@ const asyncHandler = require("express-async-handler")
 const Response = require('../models/responseModel')
 const Question = require('../models/questionModel');
 const User = require('../models/userModels');
-const { set } = require("mongoose");
 
 const createTest = asyncHandler(async(req,res)=>{
     // console.log(req.user)
@@ -12,12 +11,40 @@ const createTest = asyncHandler(async(req,res)=>{
     //Set numbers [0,1,2]
     let setNumber = Number(regNo.slice(-6)) % 3
     setNumber = String(setNumber);
-    console.log(setNumber)
-    let verbalQuestion = await Question.find({ $and: [{ questionCategory: "verbal" }, { questionSet: setNumber }] });
-    let aptitudeQuestion = await Question.find({ $and: [{ questionCategory: "aptitude" }, { questionSet: setNumber }] });
-    let coreQuestion = await Question.find({ $and: [{ questionCategory: "core" }, { questionCore: req.user.dept }] });
-    let codingQuestion = await Question.find({ $and: [{ questionCategory: "coding" }, { questionSet: setNumber }] });
-
+    // console.log(setNumber)
+    let verbalQuestion = await Question.find({ $and: [{ questionCategory: "verbal" }, { questionSet: setNumber }] },
+    {
+        _id:1,
+        questionString:1,
+        questionImage:1,
+        questionCategory:1,
+        questionOptions:1
+        
+    });
+    let aptitudeQuestion = await Question.find({ $and: [{ questionCategory: "aptitude" }, { questionSet: setNumber }]},{
+        _id:1,
+        questionString:1,
+        questionImage:1,
+        questionCategory:1,
+        questionOptions:1
+        
+    } );
+    let coreQuestion = await Question.find({ $and: [{ questionCategory: "core" }, { questionCore: req.user.dept }] },{
+        _id:1,
+        questionString:1,
+        questionImage:1,
+        questionCategory:1,
+        questionOptions:1,
+        questionCore:1,
+        
+    });
+    let codingQuestion = await Question.find({ $and: [{ questionCategory: "coding" }, { questionSet: setNumber }] },{
+        _id:1,
+        questionString:1,
+        questionImage:1,
+        questionCategory:1,
+        questionOptions:1
+    });
     function shuffleQuestions(array) {
         let currentIndex = array.length, randomIndex, temp;
       
@@ -59,11 +86,7 @@ const createTest = asyncHandler(async(req,res)=>{
 
 const submitTest = asyncHandler(async(req,res)=>{
     const { 
-        totalScore,
-        aptitudeScore,
-        verbalScore,
-        codingScore,
-        coreScore,
+        selectedOptions,
         timeTaken
     } = req.body;
 
@@ -73,6 +96,31 @@ const submitTest = asyncHandler(async(req,res)=>{
         throw new Error('Response Already Submitted')
     }
 
+    const questionList = await Question.find({});
+    let selectedQuestion, totalScore=0, verbalScore=0, aptitudeScore=0, coreScore=0, codingScore=0;
+
+    selectedOptions.map((selectedOption)=>{       
+        if(selectedOption){
+            selectedQuestion = questionList.filter(ele=>ele._id==selectedOption.questionID)
+            if(selectedOption.answerString===selectedQuestion[0].questionAnswer){
+                
+                if(selectedQuestion[0].questionCategory==='verbal'){
+                    verbalScore+=1;
+                }
+                else if(selectedQuestion[0].questionCategory==='aptitude'){
+                    aptitudeScore+=1
+                }
+                else if(selectedQuestion[0].questionCategory==='core'){
+                    coreScore+=1
+                }
+                else{
+                    codingScore+=1
+                }
+                totalScore=totalScore+1;
+            }
+        }
+    })
+  
     const newResponse = await Response.create({
         user:req.user._id,
         totalScore,
@@ -89,7 +137,6 @@ const submitTest = asyncHandler(async(req,res)=>{
     else{
         throw new Error('Test Not Submitted')
     }
-
 })
 
 module.exports = {
