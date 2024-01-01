@@ -29,6 +29,19 @@ const submitResponse = asyncHandler(async(req,res)=>{
     }
 })
 
+const feedbackCheck = asyncHandler(async(req,res)=>{
+
+    const feedbackExists = await Feedback.findOne({user:req.user._id})
+    if(feedbackExists){
+        res.status(202).json({feedbackExists:true})
+    }
+    else{
+        res.status(202).json({feedbackExists:false})
+    }
+})
+
+
 module.exports={
-    submitResponse
+    submitResponse,
+    feedbackCheck
 }

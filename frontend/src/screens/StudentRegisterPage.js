@@ -14,26 +14,41 @@ function StudentRegisterPage() {
 
     const [showModal,setShowModal] = useState(false)
 	const [formData, setFormData] = useState(
-        {fullName:"",regNo:"",email:"", role:"Student", dept:""})
+        {fullName:"",regNo:"",email:"", role:"Student", dept:"",sessionCode:""})
     
     const queryClient = useQueryClient()
     const navigate = useNavigate()
     const loginMutation = useMutation({
         mutationFn:registerStudent,
+
         onSuccess:(data)=>{
+            console.log(data)
             sessionStorage.setItem('fullName',data.fullName)
             sessionStorage.setItem('regNo',data.regNo)
             sessionStorage.setItem('email',data.email)
             sessionStorage.setItem('role',data.role)
             sessionStorage.setItem('active',data.active)
+
             navigate('/dashboard')
-            // console.log(sessionStorage.getItem('user'))
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+                navigator.keyboard.lock()
+                disableBackButton()
+            } else if (document.exitFullscreen) {
+                document.exitFullscreen();
+            }
         },
         onError:(message)=>{
             console.log(message)
         }
     })
-    
+    function disableBackButton() {
+        window.history.pushState(null, "", window.location.href);
+        window.onpopstate = function() {
+            window.history.pushState(null, "", window.location.href);
+        };
+    }
+   
 	const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
@@ -50,15 +65,16 @@ function StudentRegisterPage() {
             regNo:formData.regNo,
             email:formData.email,
             dept:formData.dept,
-            role:formData.role
+            role:formData.role,
+            sessionCode:formData.sessionCode
         })
 
     }
 
 	return (
 		<>
-        <div className='flex flex-col justify-center items-center h-screen bg-[#8EA7E9]'>
-            <div className='flex items-center justify-center mt-[-3%] py-[3%]'>
+        <div className=' flex flex-row justify-around items-center min-h-screen bg-[#8EA7E9]'>
+            <div className='flex items-center justify-center py-[3%]'>
                 <img 
                     className='object-fill w-40'
                     alt='logo'
@@ -118,6 +134,16 @@ function StudentRegisterPage() {
                         <option value='MEC'>Mechanical Engineering</option>
                     </select>
                 </div>
+
+                <div className='mt-3'>
+                    <label htmlFor='sessionCode' className='block font-semibold mb-2 text-base'>Session Code</label>
+                    <input type='text' id ='sessionCode' 
+                    name ="sessionCode"
+                    className='border border-[#7286D3] w-full text-base px-2 py-1 focus:outline-none focus:ring-0' 
+                    placeholder='Enter SessionCode...'
+                    value={formData.sessionCode} 
+                    onChange={handleChange}/>
+                </div>
                 <div class="mt-3 flex justify-between items-center">
                     <div>
                         <label><a href='/admin' className='text-color3 font-semibold'>Admin Login</a></label>
@@ -172,6 +198,16 @@ function StudentRegisterPage() {
                         <td className="px-6 py-3">
                            {formData.dept}
                         </td>
+
+                    </tr>
+                    <tr>
+                        <th className="px-6 py-3">
+                            Session Code:
+                        </th>
+                        <td className="px-6 py-3">
+                           {formData.sessionCode}
+                        </td>
+                        
                     </tr>
                 </table>
                 <div className='flex items-center justify-center mt-5 text-white'>

@@ -15,7 +15,6 @@ const responseSchema = mongoose.Schema({
         type:mongoose.Schema.Types.ObjectId,
         ref: 'User', //Model Name
     },
-    // questionSet: new Array(testSetSchema),
     
     totalScore: {
         type: String,
@@ -38,6 +37,9 @@ const responseSchema = mongoose.Schema({
     responseTime:{
         type:Date,
         default:Date.now
+    },
+    switchCount:{
+        type:String,
     }
 });
 

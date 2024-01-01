@@ -59,5 +59,36 @@ export const logout = async(token)=>{
         },
     }
     const response = await axios.post(API_URL+'logout',true,config)
+    return response.data
     // console.log(response.data)
+}
+
+export const resetLogin = async(resetData)=>{
+    // console.log(resetData)
+
+    const config = {
+        headers:{
+            Authorization:`Bearer ${resetData.token}`
+        },
+    }
+    const response  = await axios.post(API_URL+'reset',resetData,config)
+    // console.log(response.data)
+
+    return response.data
+}
+
+export const createSession = async(sessionData)=>{
+    // console.log(sessionData)
+    const config = {
+        headers:{
+            Authorization:`Bearer ${sessionData.token}`
+        },
+    }
+    const response  = await axios.post(API_URL+'createsession',sessionData,config)
+
+    console.log(response.data)
+
+    return response.data
+
+
 }

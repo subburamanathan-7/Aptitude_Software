@@ -15,6 +15,11 @@ module.exports = {
       xl:'1280px',	
       '2xl':'1536px'
     },
+    height: {
+      sm: '713px',
+      md: '1000px',
+     
+    },
     colors:{
         white:'#FFFFFF',
         red:'#fc6262',

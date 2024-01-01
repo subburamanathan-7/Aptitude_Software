@@ -7,6 +7,7 @@ import MainDashboard from './screens/MainDashboard'
 import TestDashboard from './screens/TestDashboard'
 import AdminDashboard from './screens/AdminDashboard'
 import FeedbackPage from './screens/FeedbackPage'
+import ResponseCheckScreen from './screens/ResponseCheckScreen'
 
 
 
@@ -23,6 +24,8 @@ export function App() {
 				<Route path="/testdashboard" element={<TestDashboard/>}/>  
 				<Route path="/adashboard" element={<AdminDashboard/>}/> 
 				<Route path = "/feedback" element={<FeedbackPage/>}/>
+				<Route path = "/response" element={<ResponseCheckScreen/>}/>
+
 
 			</Routes>
 		</Router>

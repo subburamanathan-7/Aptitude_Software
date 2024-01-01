@@ -17,4 +17,19 @@ export const submitFeedback = async(responseData)=>{
   
     return response.data
   }
+
+
+export const feedbackCheck = async(token)=>{
+  // console.log(token)
+  const config = {
+    headers:{
+      Authorization: `Bearer ${token}`,
+    },
+  }
+  const response = await axios.get(API_URL+'feedbackcheck',config)
+  // console.log(response.data)
+
+  return response.data
+
+}
   

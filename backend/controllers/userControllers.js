@@ -2,6 +2,8 @@ const bcrypt = require('bcryptjs');
 const asyncHandler = require("express-async-handler")
 
 const User = require('../models/userModels')
+const Admin = require('../models/adminModels')
+
 const generateToken = require("../config/generateToken.js");
 
 
@@ -16,65 +18,95 @@ const registerUser = asyncHandler(async(req,res)=>{
         dept,
         email,
         role,
+        sessionCode,
     } = req.body;
 
-    if(!fullName || !email || !role || !fullName || !regNo || !dept){
+    if(!fullName || !email || !role || !fullName || !regNo || !dept || !sessionCode){
         res.status(400)
         throw new Error('Please add the neccesary fields')
     }
 
     const userExists = await User.findOne({ $and: [{ regNo }, { role }] });
+    const currentSession = await Admin.findOne({})
+
 
     if(userExists){
         if(userExists.active){
             throw new Error('User Already Logged In')
         }
         else{
-            const value = {$set:{active:true}}
-            await User.updateOne({_id:userExists._id},value)
+            if(currentSession){
+                // console.log(currentSession)
+                if(currentSession.sessioncode===sessionCode){
+                    
+                    const value = {$set:{active:true}}
+                    await User.updateOne({_id:userExists._id},value)
+                    const loggedInUser = await User.findById(userExists._id)
+        
+                    res.json({
+                        _id: loggedInUser._id,
+                        fullName: loggedInUser.fullName,
+                        regNo: loggedInUser.regNo,
+                        email: loggedInUser.email,
+                        dept: loggedInUser.dept,
+                        role: loggedInUser.role,
+                        active: loggedInUser.active,
+                        token: generateToken(loggedInUser._id),
+                    })
 
-            const loggedInUser = await User.findById(userExists._id)
-
-            res.json({
-                _id: loggedInUser._id,
-                fullName: loggedInUser.fullName,
-                regNo: loggedInUser.regNo,
-                email: loggedInUser.email,
-                dept: loggedInUser.dept,
-                role: loggedInUser.role,
-                active: loggedInUser.active,
-                token: generateToken(loggedInUser._id),
-
-            })
+                }
+                else{
+                    res.status(402)
+                    throw new Error('Invalid Session Code')
+                }
+            }
+            else{
+                res.status(402)
+                    throw new Error('No Sessions Available')
+            }
         }
     }
     else{
-        const newUser = await User.create({
-            fullName,
-            regNo,
-            dept, 
-            email,
-            role,
-            active:true
-        });
+        if(currentSession){
+            console.log(currentSession)
+            if(currentSession.sessioncode===sessionCode){
+                const newUser = await User.create({
+                    fullName,
+                    regNo,
+                    dept, 
+                    email,
+                    role,
+                    active:true
+                });
 
-        if(newUser){
+                if(newUser){
             
-            res.status(201).json({
-                _id: newUser._id,
-                fullName: newUser.fullName,
-                regNo: newUser.regNo,
-                email: newUser.email,
-                dept: newUser.dept,
-                role: newUser.role,
-                active: newUser.active,
-                token: generateToken(newUser._id),
-            })
+                    res.status(201).json({
+                        _id: newUser._id,
+                        fullName: newUser.fullName,
+                        regNo: newUser.regNo,
+                        email: newUser.email,
+                        dept: newUser.dept,
+                        role: newUser.role,
+                        active: newUser.active,
+                        token: generateToken(newUser._id),
+                    })
+        
+                }
+                else {
+                    res.status(400)
+                    throw new Error('Unsuccessful Registration')
+                }
 
+            }
+            else{
+                res.status(402)
+                throw new Error('Invalid Session Code')
+            }
         }
-        else {
-            res.status(400)
-            throw new Error('Unsuccessful Registration')
+        else{
+            res.status(402)
+                throw new Error('No Sessions Available ')
         }
     }
 });
@@ -200,24 +232,62 @@ const  logoutUser = asyncHandler(async(req,res)=>{
 
 const resetLogin = asyncHandler(async(req,res)=>{
 
-    const {userID} = req.body;
+    const {regNo} = req.body;
+    console.log(regNo)
     const value = {$set:{active:false}}
-    await User.updateOne({_id:userID},value)
+    await User.updateOne({regNo:regNo},value)
 
-    const loggedOutUser = await User.findById(userID);
+    const resetUser = await User.findOne({regNo:regNo});
 
-    if(loggedOutUser){
-        res.status(201).json({
-            fullName: loggedOutUser.fullName,
-            email: loggedOutUser.email,
-            regNo: loggedOutUser.regNo,
-            dept: loggedOutUser.dept,
-            role: loggedOutUser.role,
-            active: loggedOutUser.active,
-        })
+    if(resetUser){
+        res.status(201).json({resetUser})
     }
     else{
+        res.status(400)
         throw new Error("Reset Failed")
+    }
+
+})
+
+
+// @desc createSession
+// @route POST api/user/createsession
+// @access Private {Admin}
+
+const createSession = asyncHandler(async(req,res)=>{
+    
+    const {sessionCode} = req.body;
+    console.log(sessionCode)
+
+    const SessionExists = await Admin.findOne({admin_id:req.user._id})
+
+    if(SessionExists){
+        console.log(SessionExists)
+        await Admin.updateOne({admin_id:req.user._id},{sessioncode:sessionCode})
+
+        const updatedSession  = await Admin.findOne({admin_id:req.user._id})
+        console.log(updatedSession)
+        if(updatedSession){
+            res.status(200).json({updatedSession})
+        }
+        else{
+            res.status(400)
+            throw new Error('Session updation was unsuccesful')
+        }
+    }
+    else{
+        const newSession = await Admin.create({
+            admin_id:req.user._id,
+            sessioncode:sessionCode
+        })
+        if(newSession){
+            res.status(200).json({newSession})
+        }
+        else{
+            res.status(400)
+            throw new Error('Session creation was unsuccesful')
+        }
+
     }
 
 })
@@ -230,5 +300,6 @@ module.exports = {
     getMe,
     logoutUser,
 
-    resetLogin
+    resetLogin,
+    createSession
 }

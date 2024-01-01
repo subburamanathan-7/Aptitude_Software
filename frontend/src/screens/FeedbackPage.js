@@ -1,23 +1,63 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+
+import { useQuery, useMutation } from '@tanstack/react-query';
+import { useNavigate } from "react-router-dom"
+
 import { DashNavbar } from '../components/DashNavbar'
-import { useMutation } from '@tanstack/react-query';
 import { submitFeedback } from '../features/feedbacks/FeedbackServices';
+import {feedbackCheck} from '../features/feedbacks/FeedbackServices';
 
 function FeedbackPage() {
+    const navigate = useNavigate();
+
     let content;
+
     const [rating1, setRating1] = useState(0);
     const [hover1, setHover1] = useState(0);
 
     const [rating2, setRating2] = useState(0);
     const [hover2, setHover2] = useState(0);
+
     const [comments,setComments] = useState('')
 
     const [submit,setSubmit] = useState(true)
-    
+    const [feedbackStatus,setFeedbackStatus] = useState(Boolean(false))
+
+    const feedbackCheckQuery = useQuery({
+        queryKey:['feedbackExists'],
+        queryFn:()=>{
+            return feedbackCheck(sessionStorage.getItem('user')) 
+        },
+        refetchOnMount:true,
+        refetchOnReconnect:true,
+        refetchOnWindowFocus:false,
+    })
+    if(feedbackCheckQuery.isLoading){
+    }
+    else if(feedbackCheckQuery.isSuccess ){
+        if(feedbackStatus!==feedbackCheckQuery.data.feedbackExists){
+            setFeedbackStatus(feedbackCheckQuery.data.feedbackExists)
+        }
+    //  console.log(feedbackCheckQuery.data)
+        // console.log(feedbackStatus)
+
+    }
+    useEffect(()=>{
+        if(!sessionStorage.getItem('user')){
+            navigate('/register');
+        }
+        else{
+            if(feedbackStatus){
+                console.log(feedbackStatus)
+                navigate('/response')
+            }
+        }
+        
+    },[feedbackStatus])
     const submitMutation = useMutation({
         mutationFn:submitFeedback,
         onSuccess:(data)=>{
-            // console.log(data)
+            console.log(data)
             setSubmit(false)
             // console.log(data)
 
@@ -112,17 +152,13 @@ function FeedbackPage() {
                 <div className='flex rounded-lg w-[90%] justify-center items-center my-[5%] mx-[5%]'>
                 <div className='p-[2%] rounded-lg shadow-xl w-full max-w-screen text-center'>
                     <div className='font-semibold text-2xl'>
-                        Congratulations on doing so well in your exams, We knew you could do it!
+                        Congratulations on doing so well in your test, We knew you could do it!
                         <br/><br/>Thank you for your feedback. Please Logout 
                     </div>
                 </div>
                 </div>
-            
-            
             </>)}
-            
         </>
-
     )
 }
 

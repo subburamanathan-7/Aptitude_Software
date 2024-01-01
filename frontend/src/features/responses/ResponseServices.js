@@ -27,3 +27,32 @@ export const submitTest = async(responseData)=>{
   return response.data
 }
 
+export const responseCheck = async(token)=>{
+  // console.log(token)
+  const config = {
+    headers:{
+      Authorization: `Bearer ${token}`,
+    },
+  }
+  const response = await axios.get(API_URL+'responsecheck',config)
+  // console.log(response.data)
+
+  return response.data
+
+}
+
+
+// export const feedbackCheck = async(token)=>{
+//   // console.log(token)
+//   const config = {
+//     headers:{
+//       Authorization: `Bearer ${token}`,
+//     },
+//   }
+//   const response = await axios.get(API_URL+'feedbackCheck',config)
+//   // console.log(response.data)
+
+//   return response.data
+
+// }
+

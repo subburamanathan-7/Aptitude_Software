@@ -1,8 +1,8 @@
 const asyncHandler = require("express-async-handler")
 
-const Response = require('../models/responseModel')
-const Question = require('../models/questionModel');
 const User = require('../models/userModels');
+const Question = require('../models/questionModel');
+const Response = require('../models/responseModel')
 
 const createTest = asyncHandler(async(req,res)=>{
     // console.log(req.user)
@@ -87,7 +87,8 @@ const createTest = asyncHandler(async(req,res)=>{
 const submitTest = asyncHandler(async(req,res)=>{
     const { 
         selectedOptions,
-        timeTaken
+        timeTaken,
+        switchCount
     } = req.body;
 
     const responseExists = await Response.findOne({user:req.user._id})
@@ -128,7 +129,8 @@ const submitTest = asyncHandler(async(req,res)=>{
         verbalScore,
         codingScore,
         coreScore,
-        timeTaken
+        timeTaken,
+        switchCount
     })
     
     if(newResponse){
@@ -139,7 +141,21 @@ const submitTest = asyncHandler(async(req,res)=>{
     }
 })
 
+const responseCheck = asyncHandler(async(req,res)=>{
+
+    const responseExists = await Response.findOne({user:req.user._id})
+    if(responseExists){
+        res.status(202).json({responseExists:true})
+    }
+    else{
+        res.status(202).json({responseExists:false})
+    }
+})
+
+
+
 module.exports = {
     createTest,
-    submitTest
+    submitTest,
+    responseCheck,
 }

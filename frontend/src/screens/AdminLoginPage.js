@@ -43,7 +43,7 @@ function AdminLoginPage() {
     }
 	return(
 		<>
-			<div className='flex flex-col justify-center items-center h-screen bg-[#8EA7E9]'>
+			<div className='min-h-screen flex flex-row justify-around items-center h-screen bg-[#8EA7E9]'>
                 <div className='flex items-center justify-center mt-[-3%] py-[3%]'>
                     <img 
                         className='object-fill w-40'
@@ -75,7 +75,7 @@ function AdminLoginPage() {
                     </div>
                     <div class="mt-3 flex justify-between items-center">
                         <div>
-                            <label><a href='/register' className='text-color3 font-semibold'>Register</a></label>
+                            <label><a href='/register' className='text-color3 font-semibold'>Student Register</a></label>
                         </div>
                     </div>
                     <div className='mt-5'>
