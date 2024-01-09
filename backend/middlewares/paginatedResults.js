@@ -97,25 +97,25 @@ const fetchQuestions = (model) => {
             // console.log({page, limit})
             // console.log({startIndex, endIndex})
 
-            let results = {};
+            let results;
 
-            if(startIndex>0){
-                results.previous ={
-                    page: page - 1,
-                    limit: limit
-                }
-            }
+            // if(startIndex>0){
+            //     results.previous ={
+            //         page: page - 1,
+            //         limit: limit
+            //     }
+            // }
 
             // console.log(questionList.length)
             
-            if(endIndex< questionList.length){
-                results.next={
-                    page: page + 1,
-                    limit: limit
-                }
-            }
+            // if(endIndex< questionList.length){
+            //     results.next={
+            //         page: page + 1,
+            //         limit: limit
+            //     }
+            // }
 
-            results.results = questionList.slice(startIndex,endIndex)
+            results = questionList.slice(startIndex,endIndex)
             res.paginatedResults = results
             
             next();

@@ -2,7 +2,6 @@ import React, { useEffect } from 'react'
 import axios from 'axios'
 import { useInfiniteQuery } from '@tanstack/react-query';
 
-
 function NewTest() {
 
     const paginateQuestions = async({pageParam})=>{
@@ -21,7 +20,7 @@ function NewTest() {
         return res.data;
     }
 
-    const {data, status, error, fetchNextPage, isFetchingNextPage, hasNextPage} = useInfiniteQuery({
+    const {data, status, error, fetchNextPage, hasNextPage, isFetchingNextPage} = useInfiniteQuery({
         queryKey:['questions'],
         queryFn:paginateQuestions,
         initialPageParam:1,
@@ -32,11 +31,11 @@ function NewTest() {
     })
 
     // console.log(data)
-    // console.log(data?.pages)
+    // console.log(data?.pages[0])
     // console.log(data?.pages[0].results)
 
 
-    const content = data?.pages.map(responoses=>responoses?.results.map(question=>{
+    const content = data?.pages.map(responoses=>responoses?.map(question=>{
         return(
             <div className='m-2 p-2 bg-green' key={question.id}>{question.questionString}</div>
         )
@@ -51,12 +50,10 @@ function NewTest() {
     }
     return (
         <>
-        {content}
-
-        <button disabled={!hasNextPage || isFetchingNextPage }
-           onClick={()=>fetchNextPage()} >{isFetchingNextPage?'Loading More': hasNextPage?'Load More':'Nothing\'s new' }</button>
+            {content}
+            <button disabled={!hasNextPage || isFetchingNextPage }
+            onClick={()=>fetchNextPage()} >{isFetchingNextPage?'Loading More': hasNextPage?'Load More':'Nothing\'s new' }</button>
         </>
-
 
     )
 }

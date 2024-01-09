@@ -5,7 +5,9 @@ function Test() {
 
     const fetchTodos = async({pageParam})=>{
         console.log(pageParam?pageParam:1)
-        const res = await fetch(`https://jsonplaceholder.typicode.com/todos?_page=${pageParam}`);
+        const res = await fetch(`https://jsonplaceholder.typicode.com/todos?_page=${pageParam}`); 
+        // const data = await res.json();
+        // console.log(data)
         return res.json();
     }
     const {data, status, error, fetchNextPage, isFetchingNextPage, hasNextPage} = useInfiniteQuery({
@@ -14,6 +16,7 @@ function Test() {
         initialPageParam:1,
         getNextPageParam:(lastPage, allPage)=>{
             const nextPage = lastPage.length ? allPage.length+1 : undefined
+            console.log({lastPage,allPage})
             return nextPage;
         }
 
@@ -29,7 +32,7 @@ function Test() {
     }))
     
     if(status==='error'){
-        return <p>{error.message()}</p>
+        return <p>{error.message}</p>
     }
     if(status==='pending'){
         return <p>Pending...</p>
