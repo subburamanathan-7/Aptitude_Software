@@ -5,7 +5,7 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 function NewTest() {
 
     const paginateQuestions = async({pageParam})=>{
-        console.log(pageParam?pageParam:1)
+        // console.log(pageParam?pageParam:1)
 
         const token = sessionStorage.getItem('user')
 
@@ -40,7 +40,6 @@ function NewTest() {
             <div className='m-2 p-2 bg-green' key={question.id}>{question.questionString}</div>
         )
     }))
-
 
     if(status==='error'){
         return <p>{error.message}</p>

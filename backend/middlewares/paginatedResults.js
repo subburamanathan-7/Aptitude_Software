@@ -89,7 +89,7 @@ const fetchQuestions = (model) => {
             // console.log(params);
 
             const page = Number(params.page);
-            const limit = 10;
+            const limit = 5;
 
             const startIndex = (page-1) * limit;
             const endIndex = page * limit;

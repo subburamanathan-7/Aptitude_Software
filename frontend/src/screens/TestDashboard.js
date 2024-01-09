@@ -1,5 +1,6 @@
 import React, { Fragment, useState, useRef, useEffect } from 'react'
-import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
+import axios from 'axios';
+import { useQuery, useQueryClient, useMutation, useInfiniteQuery } from '@tanstack/react-query';
 import { useNavigate } from "react-router-dom"
 
 import {Drawer} from "@material-tailwind/react";
@@ -16,11 +17,12 @@ import {responseCheck} from '../features/responses/ResponseServices';
 
 
 function MainDashboard() {
-    let content="", questionList,count=0;
+    let content="",questionList=[],count=0;
     const navigate = useNavigate();
     const Ref = useRef()
 
     const [currentQuestion,setCurrentQuestion] = useState(0)
+    const [paginateCount,setPaginateCount] = useState(0)
     const [selectedIndexes, setSelectedIndexes] = useState(Array(50).fill(""));
 
     const [selectedOptions, setSelectedOptions] = useState(Array(50));
@@ -209,8 +211,6 @@ function MainDashboard() {
         if(responseStatus){
             return null;
         }
-       
-
 
         submitMutation.mutate({
             selectedOptions:selectedOptions,
@@ -221,20 +221,61 @@ function MainDashboard() {
 
     }
 
-    const listQuestionSet = useQuery({
-        queryKey:['questions'],
-        queryFn:()=>{
-            return listQuestions(sessionStorage.getItem('user')) 
-        },
+    const paginateQuestions = async({pageParam})=>{
+        console.log(pageParam?pageParam:1)
+
+        const token = sessionStorage.getItem('user')
+
+        const config = {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+        }
+
+        const res = await axios.get(`http://localhost:5000/api/question/paginatequestions?page=${pageParam}`,config);
+        // console.log(res.data)
+        return res.data;
+    }
+
+    const {data, status, error, fetchNextPage, hasNextPage, isFetchingNextPage, isFetched} = useInfiniteQuery({
+        queryKey:['pquestions'],
+        queryFn:paginateQuestions,
+        initialPageParam:1,
+        getNextPageParam:(lastPage, allPage)=>{
+            const nextPage = lastPage.length ? allPage.length+1 : undefined
+            return nextPage;
+        }
     })
 
-    if(listQuestionSet.isLoading){
-    }
-    else if(listQuestionSet.isFetched ){
-        // console.log("Questions Fetched")
-        content = listQuestionSet.data
-        questionList = content
-    }
+    // content = data?.pages[0]
+
+    // questionList = content
+    
+    content = data?.pages.map(responoses=>responoses?.map(question=>{
+        questionList.push(question)
+        // return(
+        //     <div className='m-2 p-2 bg-green' key={question.id}>{question.questionString}</div>
+        // )
+    }))
+    
+    
+    // console.log(questionList)
+
+
+    // const listQuestionSet = useQuery({
+    //     queryKey:['questions'],
+    //     queryFn:()=>{
+    //         return listQuestions(sessionStorage.getItem('user')) 
+    //     },
+    // })
+
+    // if(listQuestionSet.isLoading){
+    // }
+    // else if(listQuestionSet.isFetched ){
+    //     // console.log("Questions Fetched")
+    //     content = listQuestionSet.data
+    //     questionList = content
+    // }
 
 
     function disableBackButton() {
@@ -264,29 +305,9 @@ function MainDashboard() {
             <Fragment>
                 <div className={`my-[4%] p-[2%] bg-opacity-60 min-h-screen  `}>
 
-                    {/* <div className='flex'>
-                        <div className=''>
-                            <h1 className='font-semibold text-3xl text-center text-[#000000] cursor-default'>Sections</h1>
-                            <div className='flex'>
-                                <Card name={"Verbal"} onClick={()=>handleSection('verbal')}/>
-                                <Card name={"Aptitude"} onClick={()=>handleSection('aptitude')}/>
-                                <Card name={"Core"} onClick={()=>handleSection('core')}/>
-                                <Card name={"Coding"} onClick={()=>handleSection('coding')}/>
-                            </div>
-                        </div>
-                        <div className=''>
-                           \
-                            <h1 className='font-semibold text-3xl text-center text-[#000000] cursor-default'>Status</h1>
-
-                            <div className='flex'>
-                                <CountCard name={"Attempted"} count={attemptedCount}  />
-                                <CountCard name={"Not Attemped"} count={4-Number(attemptedCount)} />
-                            </div>
-                        </div>
-                    </div> */}
-
+                   
                     {/* Pull Sidebar */}
-                    <div> SwitchCount:{switchCount}</div> 
+                    {/* <div> SwitchCount:{switchCount}</div>  */}
 
                     <div>
                         <button 
@@ -358,7 +379,7 @@ function MainDashboard() {
                     {/* Questions  */}
                         
                     {
-                        questionList?
+                        questionList.length>0?
                         (
                         <div className={`flex rounded-lg w-[90%] justify-center items-center my-[2%] mx-[5%] `}>
                         <div className='p-[2%] rounded-lg shadow-md w-full max-w-screen text-center'>
@@ -402,7 +423,12 @@ function MainDashboard() {
                                     <i className="fa-solid fa-arrow-left"></i>
                                     <span className='pl-2'>Previous</span>
                                 </button>
-                                <button onClick={()=>headForward()} title="Next Question"
+                                <button onClick={()=>{
+                                    headForward()
+                                    if(Number(currentQuestion)%5===0){
+                                        fetchNextPage()
+                                    }
+                                }} title="Next Question"
                                 className=" bg-[#7286D3] px-[2%] py-[1%] rounded-md drop-shadow-lg flex justify-center items-center text-white text-thin hover:opacity-80 hover:drop-shadow-2xl">
                                 <span className='pr-2'>Next</span>
                                 <i className="fa-solid fa-arrow-right"></i>
