@@ -2,7 +2,8 @@ const asyncHandler = require("express-async-handler")
 
 const User = require('../models/userModels');
 const Question = require('../models/questionModel');
-const Response = require('../models/responseModel')
+const Response = require('../models/responseModel');
+const Admin = require('../models/adminModels');
 
 const createTest = asyncHandler(async(req,res)=>{
     // console.log(req.user)
@@ -12,7 +13,7 @@ const createTest = asyncHandler(async(req,res)=>{
     let setNumber = Number(regNo.slice(-6)) % 3
     setNumber = String(setNumber);
     // console.log(setNumber)
-    let verbalQuestion = await Question.find({ $and: [{ questionCategory: "verbal" }, { questionSet: setNumber }] },
+    let verbalQuestion = await Question.find({ $and: [{ questionCategory: "verbal" }, { questionSet: 0 }] },
     {
         _id:1,
         questionString:1,
@@ -21,7 +22,7 @@ const createTest = asyncHandler(async(req,res)=>{
         questionOptions:1
         
     });
-    let aptitudeQuestion = await Question.find({ $and: [{ questionCategory: "aptitude" }, { questionSet: setNumber }]},{
+    let aptitudeQuestion = await Question.find({ $and: [{ questionCategory: "aptitude" }, { questionSet: 0 }]},{
         _id:1,
         questionString:1,
         questionImage:1,
@@ -38,7 +39,7 @@ const createTest = asyncHandler(async(req,res)=>{
         questionCore:1,
         
     });
-    let codingQuestion = await Question.find({ $and: [{ questionCategory: "coding" }, { questionSet: setNumber }] },{
+    let codingQuestion = await Question.find({ $and: [{ questionCategory: "coding" }, { questionSet: 0 }] },{
         _id:1,
         questionString:1,
         questionImage:1,
@@ -154,8 +155,11 @@ const responseCheck = asyncHandler(async(req,res)=>{
 
 
 
+
+
 module.exports = {
     createTest,
     submitTest,
     responseCheck,
+    
 }

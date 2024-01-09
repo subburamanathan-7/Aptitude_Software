@@ -9,6 +9,12 @@ const adminSchema = mongoose.Schema({
     sessioncode:{
         type:String,
     },
+    startTime:{
+        type:String
+    },
+    endTime:{
+        type:String
+    },
     responseTime:{
         type:Date,
         default:Date.now

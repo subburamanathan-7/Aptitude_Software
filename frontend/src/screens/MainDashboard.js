@@ -1,16 +1,12 @@
 import React, { Fragment, useState, useEffect } from 'react'
 import { useNavigate,  } from "react-router-dom"
-import {
-    Drawer,
-} from "@material-tailwind/react";
 
-import { useQuery } from '@tanstack/react-query';
+import { useQuery,useMutation } from '@tanstack/react-query';
 import {responseCheck} from '../features/responses/ResponseServices'
 
 import { DashNavbar } from '../components/DashNavbar'
-import { Card } from '../components/Card';
-import { CountCard } from '../components/CountCard';
- 
+
+import { getSession } from '../features/users/UserServices';
 
 function MainDashboard(props) {
     const navigate = useNavigate();
@@ -19,6 +15,22 @@ function MainDashboard(props) {
 
     const openDrawer = () => setOpen(true);
     const closeDrawer = () => setOpen(false);
+
+    const getSessionMutation = useMutation({
+		mutationFn:getSession,
+		onSuccess:(data)=>{
+			console.log(data)
+			console.log(data?.currentSession[0].endTime)
+            sessionStorage.setItem('endTime',data?.currentSession[0].endTime)
+		},
+		onError:(message)=>{
+			console.log(message)
+		}
+    })
+
+    useEffect(() => {
+		getSessionMutation.mutate()
+	}, []);
 
     const handleSubmit=(e)=>{
         navigate('/testdashboard')

@@ -21,9 +21,9 @@ function MainDashboard() {
     const Ref = useRef()
 
     const [currentQuestion,setCurrentQuestion] = useState(0)
-    const [selectedIndexes, setSelectedIndexes] = useState(Array(4).fill(""));
+    const [selectedIndexes, setSelectedIndexes] = useState(Array(50).fill(""));
 
-    const [selectedOptions, setSelectedOptions] = useState(Array(4));
+    const [selectedOptions, setSelectedOptions] = useState(Array(50));
     const [attemptedCount, setAttemptedCount] = useState(0);
     const [switchCount, setSwitchCount] = useState(0)
     const [responseStatus,setResponseStatus] = useState(Boolean(false))
@@ -32,6 +32,7 @@ function MainDashboard() {
     const [showFilter,setShowFilter] = useState(false)
     const [filterParam,setFilterParam]=useState('')
 
+    const [endTime, setEndTime] = useState(sessionStorage.getItem('time'))
     const openDrawer = () => setOpen(true);
     const closeDrawer = () => setOpen(false);
  
@@ -49,7 +50,7 @@ function MainDashboard() {
         if(responseStatus!==responseCheckQuery.data.responseExists){
             setResponseStatus(responseCheckQuery.data.responseExists)
         }
-       console.log(responseCheckQuery.data)
+    //    console.log(responseCheckQuery.data)
     }
 
     useEffect(()=>{
@@ -64,7 +65,7 @@ function MainDashboard() {
         }
         document.addEventListener("visibilitychange", (event) => {
             if (document.visibilityState == "visible") {
-                console.log("tab is active",switchCount)
+                // console.log("tab is active",switchCount)
             
             } else {
                 setSwitchCount(prev=>prev+1)
@@ -163,24 +164,57 @@ function MainDashboard() {
 
     
     const handleSubmit =()=>{
-        let timeremaining = sessionStorage.getItem('time')?sessionStorage.getItem('time'):('')
+        let endTotal=0;
+        if(endTime){
+            let endHours =  Number(endTime[0] ? endTime[0] + endTime[1] : endTime[1]);
+            let endMinutes = Number(endTime[3]+endTime[4]);
+            let endSeconds = Number(endTime[6]+endTime[7]);
+    
+            let dnow = new Date();
+            let currentHours = dnow.getHours(); // => 6
+            let currentMinutes = dnow.getMinutes(); // =>  00
+            let currentSeconds = dnow.getSeconds(); // => 00
+    
+            if(Number(currentSeconds) > endSeconds){
+                endSeconds += 60;
+                if(endMinutes===0){
+                    --(endHours);
+                    (endMinutes)+=60;
+                }
+                --endMinutes;
+            }
+    
+            if(Number(currentMinutes) > endMinutes){
+                endMinutes += 60;
+                --endHours;
+            }
+    
+            let diffSeconds = endSeconds - Number(currentSeconds);
+            let diffMinutes = endMinutes - Number(currentMinutes);
+            let diffHours = endHours - Number(currentHours);
+    
+            // console.log({diffHours,diffMinutes,diffSeconds})
+            
+            
+    
+            endTotal=endTotal+ (Number(diffHours)*3600);
+            endTotal=endTotal+ (Number(diffMinutes)*60);
+            endTotal = endTotal+Number(diffSeconds);
+            // console.log(endTotal)
+            // setRemainingTime(endTotal)
+    
+            
+            }
 
         if(responseStatus){
             return null;
         }
-        let total=0;
-        const hours = Number(timeremaining[1]);
-        const minutes = Number(timeremaining[3]+timeremaining[4]);
-        const seconds = Number(timeremaining[6]+timeremaining[7]);
-
-        total=total+ (hours*3600);
-        total=total+ (minutes*60);
-        total = total+seconds;
+       
 
 
         submitMutation.mutate({
             selectedOptions:selectedOptions,
-            timeTaken:60-total,
+            timeTaken:5400-endTotal,
             switchCount:switchCount,
             token:sessionStorage.getItem('user')
         })
@@ -331,7 +365,7 @@ function MainDashboard() {
                         
                             <div className=' text-xl font-semibold my-[2%]'>
                                 <div className=' flex flex-row'>
-                                    <span>Q {currentQuestion + 1}:</span>
+                                    <span key={currentQuestion + 1}>Q {currentQuestion + 1}:</span>
                                     <div className='' key={currentQuestion}>
                                         {questionList[currentQuestion].questionString}
                                     </div>

@@ -6,7 +6,6 @@ const Admin = require('../models/adminModels')
 
 const generateToken = require("../config/generateToken.js");
 
-
 // @desc registerUser
 // @route POST api/user/register
 // @access Public
@@ -36,7 +35,7 @@ const registerUser = asyncHandler(async(req,res)=>{
         }
         else{
             if(currentSession){
-                // console.log(currentSession)
+                console.log(currentSession)
                 if(currentSession.sessioncode===sessionCode){
                     
                     const value = {$set:{active:true}}
@@ -68,7 +67,7 @@ const registerUser = asyncHandler(async(req,res)=>{
     }
     else{
         if(currentSession){
-            console.log(currentSession)
+            // console.log(currentSession)
             if(currentSession.sessioncode===sessionCode){
                 const newUser = await User.create({
                     fullName,
@@ -256,17 +255,23 @@ const resetLogin = asyncHandler(async(req,res)=>{
 
 const createSession = asyncHandler(async(req,res)=>{
     
-    const {sessionCode} = req.body;
-    console.log(sessionCode)
+    const {sessionCode,startTime,endTime} = req.body;
+    // console.log({sessionCode,startTime,endTime})
 
     const SessionExists = await Admin.findOne({admin_id:req.user._id})
 
     if(SessionExists){
-        console.log(SessionExists)
-        await Admin.updateOne({admin_id:req.user._id},{sessioncode:sessionCode})
+        // console.log(SessionExists)
+        if(sessionCode){
+            await Admin.updateOne({admin_id:req.user._id},{sessioncode:sessionCode})
+        }        
+        if(startTime){
+            await Admin.updateOne({admin_id:req.user._id},{startTime:startTime})
+            await Admin.updateOne({admin_id:req.user._id},{endTime:endTime})
+        }
 
         const updatedSession  = await Admin.findOne({admin_id:req.user._id})
-        console.log(updatedSession)
+        // console.log(updatedSession)
         if(updatedSession){
             res.status(200).json({updatedSession})
         }
@@ -278,7 +283,9 @@ const createSession = asyncHandler(async(req,res)=>{
     else{
         const newSession = await Admin.create({
             admin_id:req.user._id,
-            sessioncode:sessionCode
+            sessioncode:sessionCode,
+            startTime:startTime,
+            endTime:endTime
         })
         if(newSession){
             res.status(200).json({newSession})
@@ -292,7 +299,22 @@ const createSession = asyncHandler(async(req,res)=>{
 
 })
 
+const getSession = asyncHandler(async(req,res)=>{
 
+    const currentSession = await Admin.find({},
+        {
+            endTime:1
+        }
+    )
+    if(currentSession){
+        res.status(200).json({currentSession})
+    }
+    else{
+        res.status(400)
+        throw new Error('Session Yet to be Created')
+    }
+
+})
 module.exports = {
     registerUser,
     registerAdmin,
@@ -301,5 +323,6 @@ module.exports = {
     logoutUser,
 
     resetLogin,
-    createSession
+    createSession,
+    getSession
 }

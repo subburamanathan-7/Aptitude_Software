@@ -6,6 +6,10 @@ import { createSession } from '../features/users/UserServices';
 function SessionCard(onClose) {
     
     const [sessionCode,setSessionCode] = useState("");
+    const [startTime, setStartTime] = useState("")
+    const [endTime, setEndTime] = useState("")
+
+
 
     const SessionCardMutation = useMutation({
         mutationFn:createSession,
@@ -15,11 +19,16 @@ function SessionCard(onClose) {
         onError:(message)=>{
             console.log(message)
         }
-
     }) 
 
     const handleChange = (e)=>{
         setSessionCode(e.target.value)
+    }
+    const handleAnotherChange = (e)=>{
+        setStartTime(e.target.value)
+    }
+    const onChange = (e)=>{
+        setEndTime(e.target.value)
     }
 
     const handleSubmit=(e)=>{
@@ -28,6 +37,8 @@ function SessionCard(onClose) {
 
         SessionCardMutation.mutate({
             sessionCode:sessionCode,
+            startTime:startTime,
+            endTime:endTime,
             token:sessionStorage.getItem('user')
         })
     }
@@ -43,6 +54,17 @@ function SessionCard(onClose) {
                             <input className={`placeholder-[#000000] rounded-md border py-1 px-2 w-full rounded`} placeholder='Session Code '
                             type='text' name='sessionCode' value={sessionCode} onChange={handleChange}/>
                         </div>
+
+                        <div className='mt-2'>
+                            <input className={`placeholder-[#000000] rounded-md border py-1 px-2 w-full rounded`} placeholder='Start Time '
+                            type='text' name='startTime' value={startTime} onChange={handleAnotherChange}/>
+                        </div>
+
+                        <div className='mt-2'>
+                            <input className={`placeholder-[#000000] rounded-md border py-1 px-2 w-full rounded`} placeholder='Start Time '
+                            type='text' name='startTime' value={endTime} onChange={onChange}/>
+                        </div>
+
                     </form>
                     <div className='flex items-center justify-center mt-5'>
                         <button className='bg-[#8EA7E9] text-[#000000]  focus:outine-none font-medium text-sm rounded-lg px-5 py-2.5 text-center w-full mx-2 hover:scale-95 duration-150'

@@ -86,9 +86,23 @@ export const createSession = async(sessionData)=>{
     }
     const response  = await axios.post(API_URL+'createsession',sessionData,config)
 
-    console.log(response.data)
+    // console.log(response.data)
 
     return response.data
 
 
+}
+
+export const getSession = async()=>{
+    const token = sessionStorage.getItem('user')
+    const config = {
+        headers:{
+            Authorization:`Bearer ${token}`
+        },
+    }
+
+    const response = await axios.post(API_URL+'getsession',true,config)
+    // console.log(response.data)
+
+    return response.data
 }

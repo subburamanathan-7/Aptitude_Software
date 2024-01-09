@@ -24,6 +24,8 @@ export function DashNavbar() {
             sessionStorage.removeItem('dept')
             sessionStorage.removeItem('user')
             sessionStorage.removeItem('active')
+            sessionStorage.removeItem('session')
+
 
             navigate('/')
         },

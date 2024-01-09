@@ -1,6 +1,8 @@
 const asyncHandler = require("express-async-handler")
 
 const Question = require('../models/questionModel');
+const { paginatedResults } = require("../middlewares/paginatedResults");
+const { default: mongoose } = require("mongoose");
 
 // @desc getAllQuestions
 // @route GET api/question/
@@ -94,6 +96,13 @@ const createTest = asyncHandler(async(req,res)=>{
     
 })
 
+// @desc paginateQuestions
+// @route GET api/question/paginatequestions
+// @access Public 
+
+const paginateQuestions = asyncHandler(async(req,res)=>{
+    res.json(res.paginatedResults)
+})
 
 
 module.exports ={
@@ -101,5 +110,6 @@ module.exports ={
     getQuestion,
     createQuestion,
     updateQuestion,
-    deleteQuestion
+    deleteQuestion, 
+    paginateQuestions
 }

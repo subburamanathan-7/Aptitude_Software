@@ -22,12 +22,14 @@ function StudentRegisterPage() {
         mutationFn:registerStudent,
 
         onSuccess:(data)=>{
-            console.log(data)
+            // console.log(data)
             sessionStorage.setItem('fullName',data.fullName)
             sessionStorage.setItem('regNo',data.regNo)
             sessionStorage.setItem('email',data.email)
             sessionStorage.setItem('role',data.role)
             sessionStorage.setItem('active',data.active)
+            sessionStorage.setItem('session',formData.sessionCode)
+
 
             navigate('/dashboard')
             if (!document.fullscreenElement) {

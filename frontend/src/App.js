@@ -8,6 +8,9 @@ import TestDashboard from './screens/TestDashboard'
 import AdminDashboard from './screens/AdminDashboard'
 import FeedbackPage from './screens/FeedbackPage'
 import ResponseCheckScreen from './screens/ResponseCheckScreen'
+import Test from './components/Test'
+import NewTest from './components/NewTest'
+
 
 
 
@@ -25,6 +28,9 @@ export function App() {
 				<Route path="/adashboard" element={<AdminDashboard/>}/> 
 				<Route path = "/feedback" element={<FeedbackPage/>}/>
 				<Route path = "/response" element={<ResponseCheckScreen/>}/>
+
+				<Route path = "/test" element={<Test/>}/>
+				<Route path = "/newtest" element={<NewTest/>}/>
 
 
 			</Routes>
