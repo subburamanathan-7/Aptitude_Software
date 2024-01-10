@@ -1,6 +1,8 @@
 import React, {useState } from 'react'
 import { useNavigate } from "react-router-dom"
 
+import  {toast} from 'react-toastify';
+
 
 import{useMutation, useQueryClient} from '@tanstack/react-query'
 import {adminLogin} from '../features/users/UserServices'
@@ -21,11 +23,32 @@ function AdminLoginPage() {
             sessionStorage.setItem('role',data.role)
             sessionStorage.setItem('active','')
 
+            toast.success('Hello Admin', {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
+
             navigate('/adashboard')
             // console.log(sessionStorage.getItem('user'))
         },
         onError:(message)=>{
-            console.log(message)
+            // console.log(message)
+            toast.error('Invalid Credentials', {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
         }
     })
 	const handleChange = (e) => {
@@ -35,11 +58,25 @@ function AdminLoginPage() {
     const handleSubmit = (e) => {
         e.preventDefault();
         // console.log(formData)
-        loginMutation.mutate({
-            regNo:formData.regNo,
-            password:formData.password,
-        })
 
+        if(!formData.regNo || !formData.password){
+            toast.warn('Enter all the details', {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+                });
+        }
+        else{
+            loginMutation.mutate({
+                regNo:formData.regNo,
+                password:formData.password,
+            })
+        }
     }
 	return(
 		<>

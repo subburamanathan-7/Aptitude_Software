@@ -7,6 +7,10 @@ import {Drawer} from "@material-tailwind/react";
 
 import { TestNavbar } from '../components/TestNavbar'
 // import {Modal} from '../components/Modal'
+
+import {toast} from 'react-toastify'
+
+
 import { Card } from '../components/Card';
 import { CountCard } from '../components/CountCard';
 
@@ -34,7 +38,7 @@ function MainDashboard() {
     const [showFilter,setShowFilter] = useState(false)
     const [filterParam,setFilterParam]=useState('')
 
-    const [endTime, setEndTime] = useState(sessionStorage.getItem('time'))
+    const [endTime, setEndTime] = useState(sessionStorage.getItem('endTime'))
     const openDrawer = () => setOpen(true);
     const closeDrawer = () => setOpen(false);
  
@@ -82,12 +86,33 @@ function MainDashboard() {
     const submitMutation = useMutation({
         mutationFn:submitTest,
         onSuccess:(data)=>{
-            console.log(data)
+            // console.log(data)
+            toast.success('Your Response was Recorded', {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
+
             disableBackButton()
             navigate('/feedback')
         },
         onError:(message)=>{
-            console.log(message)
+            // console.log(message)
+            toast.error('Try Again', {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
         }
     })
 
@@ -196,8 +221,6 @@ function MainDashboard() {
             let diffHours = endHours - Number(currentHours);
     
             // console.log({diffHours,diffMinutes,diffSeconds})
-            
-            
     
             endTotal=endTotal+ (Number(diffHours)*3600);
             endTotal=endTotal+ (Number(diffMinutes)*60);
@@ -206,11 +229,12 @@ function MainDashboard() {
             // setRemainingTime(endTotal)
     
             
-            }
+        }
 
         if(responseStatus){
             return null;
         }
+
 
         submitMutation.mutate({
             selectedOptions:selectedOptions,

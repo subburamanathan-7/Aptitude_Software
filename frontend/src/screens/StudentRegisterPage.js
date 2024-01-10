@@ -1,14 +1,14 @@
 import React, {useState } from 'react'
 import { useNavigate } from "react-router-dom"
 
-
 import{useMutation, useQueryClient} from '@tanstack/react-query'
+import { toast } from 'react-toastify'
+
 
 import {Modal} from '../components/Modal'
 import {registerStudent} from '../features/users/UserServices'
 
 const forese = require('../assets/forese.png')
-
 
 function StudentRegisterPage() {
 
@@ -28,7 +28,6 @@ function StudentRegisterPage() {
             sessionStorage.setItem('email',data.email)
             sessionStorage.setItem('role',data.role)
             sessionStorage.setItem('active',data.active)
-            sessionStorage.setItem('session',formData.sessionCode)
 
 
             navigate('/dashboard')
@@ -40,8 +39,10 @@ function StudentRegisterPage() {
                 document.exitFullscreen();
             }
         },
+
         onError:(message)=>{
-            console.log(message)
+            // console.log(message)
+            
         }
     })
     function disableBackButton() {
@@ -62,14 +63,33 @@ function StudentRegisterPage() {
     const handleSubmit = (e)=>{
         e.preventDefault();
         // console.log(formData)
-        loginMutation.mutate({
-            fullName:formData.fullName,
-            regNo:formData.regNo,
-            email:formData.email,
-            dept:formData.dept,
-            role:formData.role,
-            sessionCode:formData.sessionCode
-        })
+        if(!formData.dept || !formData.email || !formData.fullName || !formData.regNo || !formData.role){
+            
+            toast.warn('Enter all the necessary details ', {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
+
+        }
+        else{
+            
+            loginMutation.mutate({
+                fullName:formData.fullName,
+                regNo:formData.regNo,
+                email:formData.email,
+                dept:formData.dept,
+                role:formData.role,
+                sessionCode:formData.sessionCode
+            })
+
+        }
+       
 
     }
 
@@ -158,9 +178,6 @@ function StudentRegisterPage() {
                     Submit</button>
                 </div>
             </form>
-
-
-            
 
         </div> 
         <Modal isVisible={showModal} onClose={()=>{setShowModal(false)}}>

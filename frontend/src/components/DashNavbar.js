@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom'
 
 import {Modal} from './Modal'
 
+import {toast} from 'react-toastify'
+
 import { useMutation } from '@tanstack/react-query'
 import {logout} from '../features/users/UserServices'
 import ModalCheck from './ModalCheck'
@@ -24,13 +26,33 @@ export function DashNavbar() {
             sessionStorage.removeItem('dept')
             sessionStorage.removeItem('user')
             sessionStorage.removeItem('active')
-            sessionStorage.removeItem('session')
+            sessionStorage.removeItem('endTime')
 
+
+            toast.success('Logout Sucessful', {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
 
             navigate('/')
         },
         onError:(message)=>{
-            console.log(message)
+            toast.error('Try Again', {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
         }
 
     })

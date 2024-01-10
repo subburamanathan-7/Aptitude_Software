@@ -232,7 +232,8 @@ const  logoutUser = asyncHandler(async(req,res)=>{
 const resetLogin = asyncHandler(async(req,res)=>{
 
     const {regNo} = req.body;
-    console.log(regNo)
+    // console.log(regNo)
+    
     const value = {$set:{active:false}}
     await User.updateOne({regNo:regNo},value)
 

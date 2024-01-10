@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import{useMutation, useQueryClient} from '@tanstack/react-query'
 
+import  {toast} from 'react-toastify';
+
 
 import { createSession } from '../features/users/UserServices';
 function SessionCard(onClose) {
@@ -14,10 +16,29 @@ function SessionCard(onClose) {
     const SessionCardMutation = useMutation({
         mutationFn:createSession,
         onSuccess:(data)=>{
-            console.log(data)
+            // console.log(data)
+            toast.success('New Session is Created!', {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
         },
         onError:(message)=>{
-            console.log(message)
+            toast.error('Try Again Later', {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
         }
     }) 
 
@@ -61,7 +82,7 @@ function SessionCard(onClose) {
                         </div>
 
                         <div className='mt-2'>
-                            <input className={`placeholder-[#000000] rounded-md border py-1 px-2 w-full rounded`} placeholder='Start Time '
+                            <input className={`placeholder-[#000000] rounded-md border py-1 px-2 w-full rounded`} placeholder='End Time '
                             type='text' name='startTime' value={endTime} onChange={onChange}/>
                         </div>
 

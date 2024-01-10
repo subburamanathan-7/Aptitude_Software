@@ -1,8 +1,10 @@
 import { useNavigate } from "react-router-dom"
+
 const forese = require('../assets/forese.png')
 
 function AptitudeHome() {
     const navigate = useNavigate()
+    
     return (
         <>
              <div className='font - [Poppins] bg-[#8EA7E9] min-h-screen'>

@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import{useMutation, useQueryClient} from '@tanstack/react-query'
 
+import  {toast} from 'react-toastify';
 
 import { resetLogin } from '../features/users/UserServices';
 function ResetLogin(onClose) {
@@ -10,12 +11,31 @@ function ResetLogin(onClose) {
     const resetLoginMutation = useMutation({
         mutationFn:resetLogin,
         onSuccess:(data)=>{
-            console.log(data)
+            // console.log(data)
+            toast.success('Reset was Successful!', {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
         },
         onError:(message)=>{
-            console.log(message)
+            // console.log(message)
+            toast.error('Try Again', {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
         }
-
     }) 
 
     const handleChange = (e)=>{

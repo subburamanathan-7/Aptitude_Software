@@ -3,6 +3,9 @@ import React, { useEffect, useState } from 'react'
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useNavigate } from "react-router-dom"
 
+import {toast} from 'react-toastify'
+
+
 import { DashNavbar } from '../components/DashNavbar'
 import { submitFeedback } from '../features/feedbacks/FeedbackServices';
 import {feedbackCheck} from '../features/feedbacks/FeedbackServices';
@@ -52,6 +55,16 @@ function FeedbackPage() {
                 navigate('/response')
             }
         }
+        toast.warn('Please fill the Feedback Form', {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+        });
         
     },[feedbackStatus])
     const submitMutation = useMutation({
@@ -100,7 +113,7 @@ function FeedbackPage() {
                                     <button type='button' 
                                     key={index}
                                     className={index <= (hover1 || rating1) ? 'text-3xl text-[#FFDB58] fa-solid fa-star' : 'text-3xl fa-regular fa-star text-[#EADDCA]'}   
-                                    onClick= {() => {setRating1(index); console.log(index)} }  
+                                    onClick= {() => {setRating1(index);} }  
                                     onMouseEnter={() => setHover1(index)}
                                     onMouseLeave={()=> setHover1(rating1)}>
                                     </button>
@@ -122,7 +135,7 @@ function FeedbackPage() {
                                     <button type='button' 
                                     key={index}
                                     className={index <= (hover2|| rating2) ? 'text-3xl text-[#FFDB58] fa-solid fa-star' : 'text-3xl fa-regular fa-star text-[#EADDCA]'}   
-                                    onClick= {() => {setRating2(index); console.log(index)} }  
+                                    onClick= {() => {setRating2(index);} }  
                                     onMouseEnter={() => setHover2(index)}
                                     onMouseLeave={()=> setHover2(rating2)}>
                                     </button>

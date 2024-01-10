@@ -11,8 +11,8 @@ import ResponseCheckScreen from './screens/ResponseCheckScreen'
 import Test from './components/Test'
 import NewTest from './components/NewTest'
 
-
-
+import { ToastContainer} from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export function App() {
   return (
@@ -23,19 +23,18 @@ export function App() {
 				<Route path="/register" element={<StudentRegisterPage/>}/>  
 				<Route path="/admin" element={<AdminLoginPage/>}/> 
 
-				<Route path="/dashboard" element={<MainDashboard/>}/> 
-				<Route path="/testdashboard" element={<TestDashboard/>}/>  
-				<Route path="/adashboard" element={<AdminDashboard/>}/> 
+				<Route path = "/dashboard" element={<MainDashboard/>}/> 
+				<Route path = "/testdashboard" element={<TestDashboard/>}/>  
+				<Route path = "/adashboard" element={<AdminDashboard/>}/> 
 				<Route path = "/feedback" element={<FeedbackPage/>}/>
 				<Route path = "/response" element={<ResponseCheckScreen/>}/>
 
 				<Route path = "/test" element={<Test/>}/>
 				<Route path = "/newtest" element={<NewTest/>}/>
 
-
 			</Routes>
 		</Router>
-		
+		<ToastContainer/>
     </>
 
   )
