@@ -18,8 +18,6 @@ import {listQuestions} from '../features/responses/ResponseServices';
 import { submitTest } from '../features/responses/ResponseServices';
 import {responseCheck} from '../features/responses/ResponseServices';
 
-
-
 function MainDashboard() {
     let content="",questionList=[],count=0;
     const navigate = useNavigate();
@@ -124,12 +122,12 @@ function MainDashboard() {
 
         // console.log(selectedIndexes)
         
-        if(showFilter){
-        }
-        else{
+        // if(showFilter){
+        // }
+        // else{
             if(currentQuestion>0)
             setCurrentQuestion(prev => prev-1)
-        }
+        // }
         
     }
 
@@ -140,12 +138,12 @@ function MainDashboard() {
             behavior: 'smooth'});
 
         // console.log(selectedIndexes)
-        if(showFilter){
-        }
-        else{
+        // if(showFilter){
+        // }
+        // else{
             if(currentQuestion<questionList.length-1)
             setCurrentQuestion(prev => prev+1)
-        }
+        // }
         
     }
 
@@ -362,15 +360,15 @@ function MainDashboard() {
 
                                 </div>
                                 <div className='mt-[4%] flex flex-col items-center justify-between' >
-                                        <CountCard name={'Total'}  count={4} onClick={()=>{
+                                        <CountCard name={'Total'}  count={50} onClick={()=>{
                                             setShowFilter(false);
                                             setFilterParam('')
                                         }} />
-                                        <CountCard name={'Scored'} count={4} onClick={()=>{
+                                        <CountCard name={'Attempted'} count={attemptedCount} onClick={()=>{
                                             setShowFilter(true);
                                             setFilterParam('attemped')
                                         }}/>
-                                        <CountCard name={'Yet to Score'} count={4} onClick={()=>{
+                                        <CountCard name={'Not Attempted'} count={50-(Number(attemptedCount))} onClick={()=>{
                                             setShowFilter(true);
                                             setFilterParam('notattemped')
                                         }}/>
@@ -389,10 +387,10 @@ function MainDashboard() {
 
                                 </div>
                                 <div className='mt-[4%] flex flex-col items-center justify-between' >
-                                        <Card className="" name={"Verbal"} onClick={()=>handleSection('verbal')}/>
-                                        <Card className="" name={"Aptitude"} onClick={()=>handleSection('aptitude')}/>
-                                        <Card className="" name={"Core"} onClick={()=>handleSection('core')}/>
-                                        <Card className="" name={"Coding"} onClick={()=>handleSection('coding')}/>
+                                        <Card className="" name={"Verbal"} onClick={()=>{}}/>
+                                        <Card className="" name={"Aptitude"} onClick={()=>{}}/>
+                                        <Card className="" name={"Core"} onClick={()=>{}}/>
+                                        <Card className="" name={"Coding"} onClick={()=>{}}/>
                                 </div>
 
                             </Drawer>

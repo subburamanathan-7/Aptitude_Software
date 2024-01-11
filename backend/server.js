@@ -36,13 +36,13 @@ app.use("/api/response/", responseRoutes);
 app.use("/api/feedback/", feedbackRoutes);
 
 app.get('*',function(req,res){
-    res.sendFile(path.join(_dirname,'../frontend/build/index.html'))
+    res.sendFile(path.join(__dirname,'../frontend/build/index.html'))
 })
 
 app.use(notFound);
 app.use(errorHandler);
 
-const PORT = process.env.PORT || 6000;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, console.log(`Server is up and running in ${process.env.MODE} mode on port ${process.env.PORT}`))
 
 
