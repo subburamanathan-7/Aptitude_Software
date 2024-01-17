@@ -104,7 +104,7 @@ export function TestNavbar({handleSubmit}) {
 			);
 		}
         if(total===0){
-        //    handleSubmit(timer)
+           handleSubmit()
         }
 	};
 

@@ -7,7 +7,6 @@ import {responseCheck} from '../features/responses/ResponseServices'
 import { DashNavbar } from '../components/DashNavbar'
 
 import { getSession } from '../features/users/UserServices';
-
 function MainDashboard(props) {
     const navigate = useNavigate();
     const [responseStatus,setResponseStatus] = useState(Boolean(false))
@@ -90,6 +89,7 @@ function MainDashboard(props) {
         <div className='fixed top-0 left-0 right-0'>
             <DashNavbar/>
         </div>
+
         
         <div className='flex flex-wrap justify-center my-[2%]'>
             <div className='flex rounded-lg w-[90%] my-[5%] mx-[5%]'>

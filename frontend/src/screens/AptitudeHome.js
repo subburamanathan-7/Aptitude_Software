@@ -1,10 +1,11 @@
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom"
 
 const forese = require('../assets/forese.png')
-
+const beep = require('../assets/beep.mp3')
 function AptitudeHome() {
     const navigate = useNavigate()
-    
+   
     return (
         <>
              <div className='font - [Poppins] bg-[#8EA7E9] min-h-screen'>
@@ -18,6 +19,7 @@ function AptitudeHome() {
                         </div>
                     </nav>
                 </header>
+               
                 <div className=''>
                     
                     <div className='flex items-center justify-center font - [Inconsolata]'>
@@ -47,6 +49,7 @@ function AptitudeHome() {
                         </div>
                     </div>
                 </div>
+
             </div>
 
         </>

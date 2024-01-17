@@ -1,27 +1,31 @@
 import React, { Fragment, useState, useRef, useEffect } from 'react'
+import { useNavigate } from "react-router-dom"
+import {Drawer} from "@material-tailwind/react";
+import {toast} from 'react-toastify'
+import useSound from 'use-sound';
+
+
 import axios from 'axios';
 import { useQuery, useQueryClient, useMutation, useInfiniteQuery } from '@tanstack/react-query';
-import { useNavigate } from "react-router-dom"
-
-import {Drawer} from "@material-tailwind/react";
-
-import { TestNavbar } from '../components/TestNavbar'
-// import {Modal} from '../components/Modal'
-
-import {toast} from 'react-toastify'
-
 
 import { Card } from '../components/Card';
 import { CountCard } from '../components/CountCard';
+import { TestNavbar } from '../components/TestNavbar'
+
+
 
 import {listQuestions} from '../features/responses/ResponseServices';
 import { submitTest } from '../features/responses/ResponseServices';
 import {responseCheck} from '../features/responses/ResponseServices';
+const beep = require('../assets/beep.mp3')
+
 
 function MainDashboard() {
     let content="",questionList=[],count=0;
     const navigate = useNavigate();
     const Ref = useRef()
+    const [play] = useSound(beep);
+
 
     const [currentQuestion,setCurrentQuestion] = useState(0)
     const [paginateCount,setPaginateCount] = useState(0)
@@ -35,6 +39,8 @@ function MainDashboard() {
 
     const [showFilter,setShowFilter] = useState(false)
     const [filterParam,setFilterParam]=useState('')
+
+    const [limitParam,setLimitParam] = useState(Number(5));
 
     const [endTime, setEndTime] = useState(sessionStorage.getItem('endTime'))
     const openDrawer = () => setOpen(true);
@@ -73,6 +79,7 @@ function MainDashboard() {
             
             } else {
                 setSwitchCount(prev=>prev+1)
+                play();
             }
         });
         if(switchCount>=10){
@@ -147,11 +154,7 @@ function MainDashboard() {
         
     }
 
-    const handleSection = (section)=>{
-        let  searchIndex = questionList.findIndex((question) => question.questionCategory===section);
-        setCurrentQuestion(searchIndex)
-        closeDrawer()
-    }
+  
 
     const handleSelection=(answerString,questionID)=>{
         
@@ -233,7 +236,6 @@ function MainDashboard() {
             return null;
         }
 
-
         submitMutation.mutate({
             selectedOptions:selectedOptions,
             timeTaken:5400-endTotal,
@@ -244,7 +246,7 @@ function MainDashboard() {
     }
 
     const paginateQuestions = async({pageParam})=>{
-        console.log(pageParam?pageParam:1)
+        // console.log(pageParam?pageParam:1)
 
         const token = sessionStorage.getItem('user')
 
@@ -253,8 +255,8 @@ function MainDashboard() {
               Authorization: `Bearer ${token}`,
             },
         }
-
-        const res = await axios.get(`http://localhost:5000/api/question/paginatequestions?page=${pageParam}`,config);
+        // console.log({pageParam, sectionState})
+        const res = await axios.get(`http://localhost:5000/api/question/paginatequestions?page=${pageParam}&limit=${limitParam}`,config);
         // console.log(res.data)
         return res.data;
     }
@@ -263,14 +265,40 @@ function MainDashboard() {
         queryKey:['pquestions'],
         queryFn:paginateQuestions,
         initialPageParam:1,
+        refetchOnWindowFocus:false,
         getNextPageParam:(lastPage, allPage)=>{
             const nextPage = lastPage.length ? allPage.length+1 : undefined
             return nextPage;
         }
     })
+    useEffect(()=>{
+        if(limitParam>5)
+            fetchNextPage()
+    },[limitParam])
+   
+    const handleSection = (section)=>{
+
+        console.log(questionList.length)
+        if(questionList.length<50 && section==='verbal'){}
+        else if(questionList.length<50 && section==='aptitude'){
+            setLimitParam(50)
+        }
+        else if(questionList.length<50 && section==='core'){
+            setLimitParam(50);
+        }
+        else if(questionList.length<50 && section==='coding'){
+            setLimitParam(50);
+        }
+    }
+    const changeSection = (section)=>{
+        let  searchIndex = questionList.findIndex((question) => question.questionCategory===section);
+        if(searchIndex>=0){
+            setCurrentQuestion(searchIndex)
+            closeDrawer()
+        }
+    }
 
     // content = data?.pages[0]
-
     // questionList = content
     
     content = data?.pages.map(responoses=>responoses?.map(question=>{
@@ -313,7 +341,6 @@ function MainDashboard() {
      
     useEffect(()=>{
       window.addEventListener("beforeunload", onConfirmRefresh, { capture: true });
-
     },[])
 
 
@@ -339,14 +366,14 @@ function MainDashboard() {
                                 left: 0, 
                                 behavior: 'smooth'});
                                 openDrawer()
-                            }} title="Open Right"
-                            className={` fixed right-2 top-20  bg-[#8294C4] px-[2%] py-[1%] rounded-md drop-shadow-lg text-white hover:bg-white hover:text-[#000000] duration-150 cursor-pointer`}>
-                            <i class="fa-solid fa-angles-right"></i>
+                            }} title="Open Left"
+                            className={`fixed left-2 top-20  bg-[#8294C4] px-[2%] py-[1%] rounded-md drop-shadow-lg text-white hover:bg-white hover:text-[#000000] duration-150 cursor-pointer`}>
+                            <i class="fa-solid fa-angles-left"></i>
                         </button>
                 
                         <div className=''>
                             <div className={` ${open}? 'fixed inset-0 backdrop-blur-sm':'' `}>
-                            <Drawer placement='right' open={open} onClose={closeDrawer} className=" mt-[5%] py-4 px-2 z-10 ">
+                            <Drawer placement='left' open={open} onClose={closeDrawer} className=" mt-[5%] py-4 px-2 z-10 ">
                                
                                 <div className="flex items-center justify-between ">
                                     <h2 className='mt-[3%] underline font-semibold '>Analysis</h2>
@@ -387,10 +414,22 @@ function MainDashboard() {
 
                                 </div>
                                 <div className='mt-[4%] flex flex-col items-center justify-between' >
-                                        <Card className="" name={"Verbal"} onClick={()=>{}}/>
-                                        <Card className="" name={"Aptitude"} onClick={()=>{}}/>
-                                        <Card className="" name={"Core"} onClick={()=>{}}/>
-                                        <Card className="" name={"Coding"} onClick={()=>{}}/>
+                                        <Card className="" name={"Verbal"} onClick={()=>{
+                                            handleSection('verbal')
+                                            changeSection('verbal')
+                                        }}/>
+                                        <Card className="" name={"Aptitude"} onClick={()=>{
+                                            handleSection('aptitude')
+                                            changeSection('aptitude')
+                                        }}/>
+                                        <Card className="" name={"Core"} onClick={()=>{
+                                            handleSection('core')
+                                            changeSection('core')
+                                        }}/>
+                                        <Card className="" name={"Coding"} onClick={()=>{
+                                            handleSection('coding')
+                                            changeSection('coding')
+                                        }}/>
                                 </div>
 
                             </Drawer>
@@ -447,7 +486,7 @@ function MainDashboard() {
                                 </button>
                                 <button onClick={()=>{
                                     headForward()
-                                    if(Number(currentQuestion)%5===0){
+                                    if(Number(currentQuestion)%5===0 && questionList.length<=50){
                                         fetchNextPage()
                                     }
                                 }} title="Next Question"
@@ -470,7 +509,7 @@ function MainDashboard() {
                             top: 0, left: 0,  behavior: 'smooth'})
                             }} 
                             title="Navigate Top"
-                            className="fixed left-2 bottom-8 z-90 bg-[#8294C4] px-[2%] py-[1%] rounded-md drop-shadow-lg text-white hover:bg-white hover:text-[#000000] duration-150 cursor-pointer">
+                            className="fixed right-2 bottom-8 z-90 bg-[#8294C4] px-[2%] py-[1%] rounded-md drop-shadow-lg text-white hover:bg-white hover:text-[#000000] duration-150 cursor-pointer">
                                 <i class="fa-solid fa-chevron-up"></i>
                         </button>
                 

@@ -1,5 +1,7 @@
-import React, {useState } from 'react'
+import React, {useEffect, useState } from 'react'
 import { useNavigate } from "react-router-dom"
+import useSound from 'use-sound';
+
 
 import{useMutation, useQueryClient} from '@tanstack/react-query'
 import { toast } from 'react-toastify'
@@ -9,12 +11,16 @@ import {Modal} from '../components/Modal'
 import {registerStudent} from '../features/users/UserServices'
 
 const forese = require('../assets/forese.png')
+const beep = require('../assets/beep.mp3')
+
 
 function StudentRegisterPage() {
 
     const [showModal,setShowModal] = useState(false)
 	const [formData, setFormData] = useState(
         {fullName:"",regNo:"",email:"", role:"Student", dept:"",sessionCode:""})
+
+    const [play] = useSound(beep);
     
     const queryClient = useQueryClient()
     const navigate = useNavigate()
@@ -28,6 +34,7 @@ function StudentRegisterPage() {
             sessionStorage.setItem('email',data.email)
             sessionStorage.setItem('role',data.role)
             sessionStorage.setItem('active',data.active)
+            
 
 
             navigate('/dashboard')
@@ -38,6 +45,7 @@ function StudentRegisterPage() {
             } else if (document.exitFullscreen) {
                 document.exitFullscreen();
             }
+            play();
         },
 
         onError:(message)=>{
