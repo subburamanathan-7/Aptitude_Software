@@ -2,17 +2,15 @@ import React, {useEffect, useState } from 'react'
 import { useNavigate } from "react-router-dom"
 import useSound from 'use-sound';
 
-
 import{useMutation, useQueryClient} from '@tanstack/react-query'
 import { toast } from 'react-toastify'
 
-
 import {Modal} from '../components/Modal'
 import {registerStudent} from '../features/users/UserServices'
+import { getSession } from '../features/users/UserServices';
 
 const forese = require('../assets/forese.png')
 const beep = require('../assets/beep.mp3')
-
 
 function StudentRegisterPage() {
 
@@ -24,19 +22,17 @@ function StudentRegisterPage() {
     
     const queryClient = useQueryClient()
     const navigate = useNavigate()
+
     const loginMutation = useMutation({
         mutationFn:registerStudent,
 
         onSuccess:(data)=>{
-            // console.log(data)
             sessionStorage.setItem('fullName',data.fullName)
             sessionStorage.setItem('regNo',data.regNo)
             sessionStorage.setItem('email',data.email)
             sessionStorage.setItem('role',data.role)
             sessionStorage.setItem('active',data.active)
             
-
-
             navigate('/dashboard')
             if (!document.fullscreenElement) {
                 document.documentElement.requestFullscreen();
@@ -50,7 +46,16 @@ function StudentRegisterPage() {
 
         onError:(message)=>{
             // console.log(message)
-            
+            toast.warn(`${message.message}`, {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
         }
     })
     function disableBackButton() {
@@ -70,7 +75,11 @@ function StudentRegisterPage() {
     }
     const handleSubmit = (e)=>{
         e.preventDefault();
-        // console.log(formData)
+
+        const validdomain = "svce.ac.in";
+        const emaildomain = formData.email.split('@')[1];
+        const re = /^[0-9\b]+$/;
+
         if(!formData.dept || !formData.email || !formData.fullName || !formData.regNo || !formData.role){
             
             toast.warn('Enter all the necessary details ', {
@@ -83,10 +92,32 @@ function StudentRegisterPage() {
                 progress: undefined,
                 theme: "light",
             });
-
+        }
+        else if(formData.regNo.length !==  13 || !re.test(formData.regNo)){
+            toast.warn('Enter valid registration number', {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
+        }
+        else if(emaildomain.localeCompare(validdomain) !==0 ){
+            toast.warn('Enter SVCE email id', {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
         }
         else{
-            
             loginMutation.mutate({
                 fullName:formData.fullName,
                 regNo:formData.regNo,
@@ -95,10 +126,7 @@ function StudentRegisterPage() {
                 role:formData.role,
                 sessionCode:formData.sessionCode
             })
-
         }
-       
-
     }
 
 	return (

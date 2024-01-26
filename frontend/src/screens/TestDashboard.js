@@ -4,7 +4,6 @@ import {Drawer} from "@material-tailwind/react";
 import {toast} from 'react-toastify'
 import useSound from 'use-sound';
 
-
 import axios from 'axios';
 import { useQuery, useQueryClient, useMutation, useInfiniteQuery } from '@tanstack/react-query';
 
@@ -12,13 +11,10 @@ import { Card } from '../components/Card';
 import { CountCard } from '../components/CountCard';
 import { TestNavbar } from '../components/TestNavbar'
 
-
-
 import {listQuestions} from '../features/responses/ResponseServices';
 import { submitTest } from '../features/responses/ResponseServices';
 import {responseCheck} from '../features/responses/ResponseServices';
 const beep = require('../assets/beep.mp3')
-
 
 function MainDashboard() {
     let content="",questionList=[],count=0;
@@ -26,6 +22,7 @@ function MainDashboard() {
     const Ref = useRef()
     const [play] = useSound(beep);
 
+    const image = "https://i.ibb.co/9wkqPgJ/app.jpg";
 
     const [currentQuestion,setCurrentQuestion] = useState(0)
     const [paginateCount,setPaginateCount] = useState(0)
@@ -39,14 +36,11 @@ function MainDashboard() {
 
     const [showFilter,setShowFilter] = useState(false)
     const [filterParam,setFilterParam]=useState('')
-
     const [limitParam,setLimitParam] = useState(Number(5));
-
     const [endTime, setEndTime] = useState(sessionStorage.getItem('endTime'))
+
     const openDrawer = () => setOpen(true);
     const closeDrawer = () => setOpen(false);
- 
-
 
     const responseCheckQuery = useQuery({
         queryKey:['responseExists'],
@@ -64,15 +58,16 @@ function MainDashboard() {
     }
 
     useEffect(()=>{
-        
         if(!sessionStorage.getItem('user')){
             navigate('/register');
         }
+
         else{
             if(responseStatus){
                 navigate('/feedback')
             }
         }
+
         document.addEventListener("visibilitychange", (event) => {
             if (document.visibilityState == "visible") {
                 // console.log("tab is active",switchCount)
@@ -83,11 +78,10 @@ function MainDashboard() {
             }
         });
         if(switchCount>=10){
-            // handleSubmit(sessionStorage.getItem('time'))
+            // handleSubmit();
         }
     },[switchCount,setSwitchCount,responseStatus]) 
 
-   
     const submitMutation = useMutation({
         mutationFn:submitTest,
         onSuccess:(data)=>{
@@ -154,8 +148,6 @@ function MainDashboard() {
         
     }
 
-  
-
     const handleSelection=(answerString,questionID)=>{
         
         const updatedIndexes = [...selectedIndexes];
@@ -190,7 +182,6 @@ function MainDashboard() {
         // console.log(responses)
     }
 
-    
     const handleSubmit =()=>{
         let endTotal=0;
         if(endTime){
@@ -229,7 +220,6 @@ function MainDashboard() {
             // console.log(endTotal)
             // setRemainingTime(endTotal)
     
-            
         }
 
         if(responseStatus){
@@ -240,14 +230,12 @@ function MainDashboard() {
             selectedOptions:selectedOptions,
             timeTaken:5400-endTotal,
             switchCount:switchCount,
-            token:sessionStorage.getItem('user')
+            token:sessionStorage.getItem('user') 
         })
 
     }
 
     const paginateQuestions = async({pageParam})=>{
-        // console.log(pageParam?pageParam:1)
-
         const token = sessionStorage.getItem('user')
 
         const config = {
@@ -255,9 +243,8 @@ function MainDashboard() {
               Authorization: `Bearer ${token}`,
             },
         }
-        // console.log({pageParam, sectionState})
+
         const res = await axios.get(`http://localhost:5000/api/question/paginatequestions?page=${pageParam}&limit=${limitParam}`,config);
-        // console.log(res.data)
         return res.data;
     }
 
@@ -271,10 +258,6 @@ function MainDashboard() {
             return nextPage;
         }
     })
-    useEffect(()=>{
-        if(limitParam>5)
-            fetchNextPage()
-    },[limitParam])
    
     const handleSection = (section)=>{
 
@@ -311,7 +294,6 @@ function MainDashboard() {
     
     // console.log(questionList)
 
-
     // const listQuestionSet = useQuery({
     //     queryKey:['questions'],
     //     queryFn:()=>{
@@ -339,10 +321,9 @@ function MainDashboard() {
         return event.returnValue = "Are you sure you want to leave the page?";
     }
      
-    useEffect(()=>{
-      window.addEventListener("beforeunload", onConfirmRefresh, { capture: true });
-    },[])
-
+useEffect(()=>{
+    window.addEventListener("beforeunload", onConfirmRefresh, { capture: true });
+},[])
 
     return(
         <>
@@ -431,7 +412,6 @@ function MainDashboard() {
                                             changeSection('coding')
                                         }}/>
                                 </div>
-
                             </Drawer>
                             </div>
                         </div>
@@ -450,16 +430,26 @@ function MainDashboard() {
                                     <span key={currentQuestion + 1}>Q {currentQuestion + 1}:</span>
                                     <div className='' key={currentQuestion}>
                                         {questionList[currentQuestion].questionString}
+                                        {/* questionList[currentQuestion].questionImage */}
                                     </div>
                                 </div>
+                                <div>
+                                    {
+                                        (true?
+                                            (<div className={`${questionList[currentQuestion].questionImage!==null?'':'hidden'} mt-[2%] flex justify-center`}>
+                                                <img className='w-[25%]' 
+                                                src={questionList[currentQuestion].questionImage} border="0"></img>                                     
+                                            </div>):(<div className='hidden'></div>)
+                                        )
+                                    }
+                                    </div>
                                 <div className='w-full text-semibold flex flex-col mt-[2%]'>
-                                
                                 {
                                     questionList[currentQuestion].questionOptions.map((option) => {
                                     return(
                                         <button  
                                         key={option.questionAnswer}
-                                        className= {`mx-[6%] my-2 px-[2%] py-4 rounded-md  border-2 border-[#7286D3] hover:scale-95 transition-all duration-150
+                                        className= {`mx-[6%] my-2 px-[2%] py-4 rounded-2xl  border-2 border-[#7286D3] hover:scale-95 transition-all duration-150
                                         ${selectedOptions[currentQuestion]?selectedOptions[currentQuestion].answerString === option.answerString ? 'bg-[#7286D3]':'bg-[#fff]':'bg-[#fff]'}`}
                                         onClick={()=>{
                                             handleSelection(option.answerString,questionList[currentQuestion]._id)}}>
@@ -476,50 +466,46 @@ function MainDashboard() {
                     }
 
                         {/* Navigate */}
-                        <div className='my-[2%]'>
-                        
-                            <div className='flex flex-wrap justify-between mx-[5%]'>
-                                <button onClick={()=>headPrevious()} title="Previous Question"
-                                className="bg-[#7286D3] px-[2%] py-[1%] rounded-md drop-shadow-lg flex justify-center items-center text-white text-thin hover:opacity-80 hover:drop-shadow-2xl">
-                                    <i className="fa-solid fa-arrow-left"></i>
-                                    <span className='pl-2'>Previous</span>
-                                </button>
-                                <button onClick={()=>{
-                                    headForward()
-                                    if(Number(currentQuestion)%5===0 && questionList.length<=50){
-                                        fetchNextPage()
-                                    }
-                                }} title="Next Question"
-                                className=" bg-[#7286D3] px-[2%] py-[1%] rounded-md drop-shadow-lg flex justify-center items-center text-white text-thin hover:opacity-80 hover:drop-shadow-2xl">
-                                <span className='pr-2'>Next</span>
-                                <i className="fa-solid fa-arrow-right"></i>
-                                </button>
-                            </div>
-                        
-                            {/* <div className='flex flex-wrap justify-end'>
-                                <button onClick={()=>handleSubmit()} title="Sumbit Test"
-                                className=" my-[2%] z-90 bg-[#7286D3] px-[3%] py-[1%] rounded-md drop-shadow-lg flex justify-center items-center text-white text-thin hover:opacity-80 hover:scale-95 duration-150">
-                                    Submit
-                                </button>
-                            </div> */}
+                    <div className='my-[2%]'>
+                    
+                        <div className='flex flex-wrap justify-between mx-[5%]'>
+                            <button onClick={()=>headPrevious()} title="Previous Question"
+                            className="bg-[#7286D3] px-[2%] py-[1%] rounded-md drop-shadow-lg flex justify-center items-center text-white text-thin hover:opacity-80 hover:drop-shadow-2xl">
+                                <i className="fa-solid fa-arrow-left"></i>
+                                <span className='pl-2'>Previous</span>
+                            </button>
+                            <button onClick={()=>{
+                                headForward()
+                                if(Number(currentQuestion)%5===0 && questionList.length<=50){
+                                    fetchNextPage()
+                                }
+                            }} title="Next Question"
+                            className=" bg-[#7286D3] px-[2%] py-[1%] rounded-md drop-shadow-lg flex justify-center items-center text-white text-thin hover:opacity-80 hover:drop-shadow-2xl">
+                            <span className='pr-2'>Next</span>
+                            <i className="fa-solid fa-arrow-right"></i>
+                            </button>
                         </div>
-                        {/* Navigate - Top */}
+                    
+                        {/* <div className='flex flex-wrap justify-end'>
+                            <button onClick={()=>handleSubmit()} title="Sumbit Test"
+                            className=" my-[2%] z-90 bg-[#7286D3] px-[3%] py-[1%] rounded-md drop-shadow-lg flex justify-center items-center text-white text-thin hover:opacity-80 hover:scale-95 duration-150">
+                                Submit
+                            </button>
+                        </div> */}
+                    </div>
+                    {/* Navigate - Top */}
 
-                        <button onClick={()=>{window.scroll({
-                            top: 0, left: 0,  behavior: 'smooth'})
-                            }} 
-                            title="Navigate Top"
-                            className="fixed right-2 bottom-8 z-90 bg-[#8294C4] px-[2%] py-[1%] rounded-md drop-shadow-lg text-white hover:bg-white hover:text-[#000000] duration-150 cursor-pointer">
-                                <i class="fa-solid fa-chevron-up"></i>
-                        </button>
-                
+                    <button onClick={()=>{window.scroll({
+                        top: 0, left: 0,  behavior: 'smooth'})
+                        }} 
+                        title="Navigate Top"
+                        className="fixed right-2 bottom-8 z-90 bg-[#8294C4] px-[2%] py-[1%] rounded-md drop-shadow-lg text-white hover:bg-white hover:text-[#000000] duration-150 cursor-pointer">
+                            <i class="fa-solid fa-chevron-up"></i>
+                    </button>
                 </div>
-                
             </Fragment>
             </div>
-           
         </>
     )
 }
-
 export default MainDashboard

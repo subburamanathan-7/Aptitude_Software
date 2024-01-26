@@ -13,7 +13,7 @@ export const listQuestions = async(token)=>{
 }
 
 export const submitTest = async(responseData)=>{
-  console.log(responseData)
+  // console.log(responseData)
   // console.log(responseData.token)
 
   const config = {
@@ -22,7 +22,7 @@ export const submitTest = async(responseData)=>{
     },
   }
   const response = await axios.post(API_URL+'submit',responseData,config)
-  console.log(response.data)
+  // console.log(response.data)
 
   return response.data
 }

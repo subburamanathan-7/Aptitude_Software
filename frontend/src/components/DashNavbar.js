@@ -27,7 +27,7 @@ export function DashNavbar() {
             sessionStorage.removeItem('user')
             sessionStorage.removeItem('active')
             sessionStorage.removeItem('endTime')
-
+            sessionStorage.removeItem('startTime')
 
             toast.success('Logout Sucessful', {
                 position: "top-right",
@@ -63,7 +63,6 @@ export function DashNavbar() {
 
     }
     const handleLogout =()=>{
-        console.log('Hello')
         logoutMutation.mutate(sessionStorage.getItem('user'))
     }
 

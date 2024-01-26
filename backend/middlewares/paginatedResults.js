@@ -34,13 +34,13 @@ const fetchQuestions = (model) => {
             const page = Number(params.page);
             const limit = Number(params.limit);
 
-
-            let startIndex = (page-1) *limit;
+            let startIndex = (page-1)*limit;
             let endIndex = page *  limit;
 
             if(page!==1) {
                 console.log('Already Fetched')
             }
+            
             else{
 
                 let regNo = req.user.regNo;
@@ -49,7 +49,6 @@ const fetchQuestions = (model) => {
         
                 // console.log(setNumber)
                 // console.log(req.user)
-
 
                 let verbalQuestion = await model.find({ $and: [{ questionCategory: "verbal" }, { questionSet: setNumber }] },
                 {
@@ -117,12 +116,17 @@ const fetchQuestions = (model) => {
             // console.log(section)
             
             console.log({startIndex,endIndex,limit})
-           
-            results = questionList.slice(startIndex,endIndex)
-            res.paginatedResults = results
-            console.log(results.length)
-
-            next();
+            // if(limit!=5){
+            //     results = questionList.slice(startIndex,questionList.length)
+            //     res.paginatedResults = results
+            //     console.log(results.length)
+            // }
+            // else{
+                results = questionList.slice(startIndex,endIndex)
+                res.paginatedResults = results
+                console.log(results.length)
+            // }
+            next()
         }
         catch(e){
             res.status(401)

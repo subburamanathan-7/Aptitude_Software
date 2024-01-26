@@ -4,14 +4,12 @@ import { DashNavbar } from '../components/DashNavbar'
 import { useNavigate } from "react-router-dom"
 
 function ResponseCheckScreen() {
-
     const navigate = useNavigate()
 
     useEffect(()=>{
         if(!sessionStorage.getItem('user')){
             navigate('/register');
         }
-
     },[])
     return (
     <>
@@ -26,7 +24,6 @@ function ResponseCheckScreen() {
                     </div>
                 </div>
         </div>
-
     </>
     )
 }

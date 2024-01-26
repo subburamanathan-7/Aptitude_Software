@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom"
 
 import  {toast} from 'react-toastify';
 
-
 import{useMutation, useQueryClient} from '@tanstack/react-query'
 import {adminLogin} from '../features/users/UserServices'
 
@@ -123,7 +122,6 @@ function AdminLoginPage() {
                     </div>
                 </form>
             </div> 
-		
 		</>
 	)
 }

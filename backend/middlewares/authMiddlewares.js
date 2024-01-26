@@ -16,7 +16,7 @@ const protect = asyncHandler(async(req,res,next)=>{
             // console.log(decoded.id)
             req.user = await User.findById(decoded.id).select('-password')
             // console.log(req.user)
-            next()
+            next();
         }
         catch(error){
             res.status(401)
@@ -32,7 +32,7 @@ const protect = asyncHandler(async(req,res,next)=>{
 //authenticates only Admin
 const authOnlyAdmin = (req, res, next) => {
     if (req.user && req.user.role==='Admin') {
-        next();
+        next()
     } 
     else {
         res.status(401)

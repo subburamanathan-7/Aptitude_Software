@@ -6,7 +6,6 @@ import { useNavigate } from 'react-router-dom'
 import {Modal} from './Modal'
 import ModalCheck from './ModalCheck'
 
-
 const forese = require('../assets/forese.png')
 
 export function TestNavbar({handleSubmit}) {
@@ -14,58 +13,59 @@ export function TestNavbar({handleSubmit}) {
 	const [timer, setTimer] = useState("00:00:00");
     const [showSubmit,setShowSubmit] = useState(false)
 	const [endTime,setEndTime] = useState(sessionStorage.getItem('endTime'))
-	
+
     const navigate = useNavigate()
 	const Ref = useRef()
 
 	const computeDifference =()=>{
 		// console.log(endTime)
 		if(endTime){
-		let endHours =  Number(endTime[0] ? endTime[0] + endTime[1] : endTime[1]);
-		let endMinutes = Number(endTime[3]+endTime[4]);
-		let endSeconds = Number(endTime[6]+endTime[7]);
+			let endHours =  Number(endTime[0] ? endTime[0] + endTime[1] : endTime[1]);
+			let endMinutes = Number(endTime[3]+endTime[4]);
+			let endSeconds = Number(endTime[6]+endTime[7]);
 
-		let dnow = new Date();
-		let currentHours = dnow.getHours(); // => 6
-		let currentMinutes = dnow.getMinutes(); // =>  00
-		let currentSeconds = dnow.getSeconds(); // => 00
+			let dnow = new Date();
+			let currentHours = dnow.getHours(); // => 6
+			let currentMinutes = dnow.getMinutes(); // =>  00
+			let currentSeconds = dnow.getSeconds(); // => 00
 
-		if(Number(currentSeconds) > endSeconds){
-			endSeconds += 60;
-			if(endMinutes===0){
-				--(endHours);
-				(endMinutes)+=60;
+			if(Number(currentSeconds) > endSeconds){
+				endSeconds += 60;
+				if(endMinutes===0){
+					--(endHours);
+					(endMinutes)+=60;
+				}
+				--endMinutes;
 			}
-			--endMinutes;
+
+			if(Number(currentMinutes) > endMinutes){
+				endMinutes += 60;
+				--endHours;
+			}
+
+			let diffSeconds = endSeconds - Number(currentSeconds);
+			let diffMinutes = endMinutes - Number(currentMinutes);
+			let diffHours = endHours - Number(currentHours);
+
+			// console.log({diffHours,diffMinutes,diffSeconds})	
+			let endTotal=0;
+
+			endTotal=endTotal+ (Number(diffHours)*3600);
+			endTotal=endTotal+ (Number(diffMinutes)*60);
+			endTotal = endTotal+Number(diffSeconds);
+			// console.log(endTotal)
+			// setRemainingTime(endTotal)
+
+			return{
+				diffHours,
+				diffMinutes,
+				diffSeconds,
+				endTotal
+			}
 		}
-
-		if(Number(currentMinutes) > endMinutes){
-			endMinutes += 60;
-			--endHours;
+		else{
+			navigate('/dashoard')
 		}
-
-		let diffSeconds = endSeconds - Number(currentSeconds);
-		let diffMinutes = endMinutes - Number(currentMinutes);
-		let diffHours = endHours - Number(currentHours);
-
-		// console.log({diffHours,diffMinutes,diffSeconds})
-		
-		let endTotal=0;
-
-		endTotal=endTotal+ (Number(diffHours)*3600);
-		endTotal=endTotal+ (Number(diffMinutes)*60);
-		endTotal = endTotal+Number(diffSeconds);
-		// console.log(endTotal)
-		// setRemainingTime(endTotal)
-
-		return{
-			diffHours,
-			diffMinutes,
-			diffSeconds,
-			endTotal
-		}
-		}
-
 	}
 
     const getTimeRemaining = (e) => {
@@ -109,7 +109,6 @@ export function TestNavbar({handleSubmit}) {
 	};
 
 	const clearTimer = (e) => {
-
 		
 		// If you adjust it you should also need to
 		// adjust the Endtime formula we are about
@@ -146,7 +145,6 @@ export function TestNavbar({handleSubmit}) {
 		let deadline = new Date();
 		const {diffHours, diffMinutes, diffSeconds, endTotal} =  computeDifference();
 
-
 		// This is where you need to adjust if
 		// you entend to add more time
 		deadline.setSeconds(deadline.getSeconds() + endTotal);
@@ -182,7 +180,6 @@ export function TestNavbar({handleSubmit}) {
                         Submit Test 
                     </button>
                 </div>
-               
             </nav>
         </header>
         <Modal isVisible={showSubmit} onClose={()=>{setShowSubmit(false)}}>
@@ -190,10 +187,6 @@ export function TestNavbar({handleSubmit}) {
                 sessionStorage.setItem('time',timer)
                 handleSubmit()}}/>
         </Modal>
-
-       
-       
-       
    </>
   )
 }

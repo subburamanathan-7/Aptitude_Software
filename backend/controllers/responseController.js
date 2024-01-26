@@ -86,7 +86,7 @@ const createTest = asyncHandler(async(req,res)=>{
 })
 
 const submitTest = asyncHandler(async(req,res)=>{
-    const { 
+    const {
         selectedOptions,
         timeTaken,
         switchCount
@@ -125,6 +125,9 @@ const submitTest = asyncHandler(async(req,res)=>{
   
     const newResponse = await Response.create({
         user:req.user._id,
+        name:req.user.fullName,
+        dept:req.user.dept,
+        regNo:req.user.regNo,
         totalScore,
         aptitudeScore,
         verbalScore,
@@ -152,10 +155,6 @@ const responseCheck = asyncHandler(async(req,res)=>{
         res.status(202).json({responseExists:false})
     }
 })
-
-
-
-
 
 module.exports = {
     createTest,

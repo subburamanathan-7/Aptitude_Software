@@ -1,8 +1,6 @@
 import axios from "axios";
 const API_URL = 'http://localhost:5000/api/feedback/'
 
-
-
 export const submitFeedback = async(responseData)=>{
     // console.log(responseData)
     // console.log(responseData.token)

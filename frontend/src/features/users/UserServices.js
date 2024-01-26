@@ -1,7 +1,6 @@
 import axios from 'axios'
 const API_URL = 'http://localhost:5000/api/user/'
 
-
 export const registerStudent = async(userData)=>{
     const response = await axios.post(API_URL+'register',userData)
         .catch(function(error){
@@ -26,6 +25,7 @@ export const registerStudent = async(userData)=>{
             return response.data
         }
 }
+
 export const adminLogin = async(userData)=>{
     // console.log(userData)
     const response = await axios.post(API_URL+'alogin',userData)
@@ -85,24 +85,27 @@ export const createSession = async(sessionData)=>{
         },
     }
     const response  = await axios.post(API_URL+'createsession',sessionData,config)
-
     // console.log(response.data)
-
     return response.data
-
-
 }
 
-export const getSession = async()=>{
-    const token = sessionStorage.getItem('user')
+export const getSession = async(sessionData)=>{
+    // console.log(sessionData)
+    const config = {
+        headers:{
+            Authorization:`Bearer ${sessionData.token}`
+        },
+    }
+    const response = await axios.post(API_URL+'getsession',true,config)
+    return response.data
+}
+
+export const sessionCheck = async(token)=>{
     const config = {
         headers:{
             Authorization:`Bearer ${token}`
         },
     }
-
-    const response = await axios.post(API_URL+'getsession',true,config)
-    // console.log(response.data)
-
+    const response = await axios.get(API_URL+'sessioncheck',config)
     return response.data
 }

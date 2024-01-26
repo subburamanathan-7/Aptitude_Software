@@ -7,11 +7,13 @@ const {registerUser, logoutUser, registerAdmin, loginAdmin, resetLogin, createSe
 router.route('/register').post(registerUser)
 router.route('/logout').post(protect,logoutUser)
 
-router.route('/aregister').post(protect,authOnlyAdmin,registerAdmin)
+router.route('/aregister').post(registerAdmin)
 router.route('/alogin').post(loginAdmin)
 
 router.route('/reset').post(protect,authOnlyAdmin,resetLogin)
 router.route('/createsession').post(protect,authOnlyAdmin,createSession)
 
 router.route('/getsession').post(protect,getSession)
+router.route('/sessioncheck').get(protect,getSession)
+
 module.exports = router; 

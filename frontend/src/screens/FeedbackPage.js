@@ -51,29 +51,29 @@ function FeedbackPage() {
         }
         else{
             if(feedbackStatus){
-                console.log(feedbackStatus)
+                // console.log(feedbackStatus)
                 navigate('/response')
             }
+            else{
+                toast.warn('Please fill the Feedback Form', {
+                    position: "top-right",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                });
+            }
         }
-        toast.warn('Please fill the Feedback Form', {
-            position: "top-right",
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-        });
-        
     },[feedbackStatus])
+
     const submitMutation = useMutation({
         mutationFn:submitFeedback,
         onSuccess:(data)=>{
-            console.log(data)
-            setSubmit(false)
             // console.log(data)
-
+            setSubmit(false)
         },
         onError:(message)=>{
             console.log(message)
@@ -129,7 +129,6 @@ function FeedbackPage() {
                                 {
                                 [...Array(5)].map((star, index) => {
                                     index += 1
-                                    
                                 
                                     return (
                                     <button type='button' 

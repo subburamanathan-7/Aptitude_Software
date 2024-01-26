@@ -35,7 +35,7 @@ const registerUser = asyncHandler(async(req,res)=>{
         }
         else{
             if(currentSession){
-                console.log(currentSession)
+                // console.log(currentSession)
                 if(currentSession.sessioncode===sessionCode){
                     
                     const value = {$set:{active:true}}
@@ -300,11 +300,16 @@ const createSession = asyncHandler(async(req,res)=>{
 
 })
 
+// @desc Get Session
+// @route GET api/user/getsession
+// @access Private { Student}
+
 const getSession = asyncHandler(async(req,res)=>{
 
     const currentSession = await Admin.find({},
         {
-            endTime:1
+            endTime:1,
+            startTime:1
         }
     )
     if(currentSession){
@@ -316,6 +321,8 @@ const getSession = asyncHandler(async(req,res)=>{
     }
 
 })
+
+
 module.exports = {
     registerUser,
     registerAdmin,
